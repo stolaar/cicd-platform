@@ -1,0 +1,19 @@
+{
+  "name": "@stolaar/eslint",
+  "version": "0.0.1",
+  "dependencies": {
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-config-turbo": "latest",
+    "eslint-plugin-react": "latest"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "5.53.0",
+    "@typescript-eslint/parser": "5.53.0",
+    "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-security": "1.7.1",
+    "prettier": "2.8.4"
+  }
+}

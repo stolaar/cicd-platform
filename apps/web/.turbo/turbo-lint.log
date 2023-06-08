@@ -1,0 +1,7 @@
+warning From Yarn 1.0 onwards, scripts don't require "--" for options to be forwarded. In a future version, any explicit "--" will be forwarded as-is to the scripts.
+$ next lint . --fix
+info  - Loaded env from /home/astolic/Desktop/work/personal/cdktf/cicd-platform/apps/web/.env.local
+warn  - You have enabled experimental features (externalDir, runtime) in next.config.js.
+warn  - Experimental features are not covered by semver, and may cause unexpected or broken application behavior. Use at your own risk.
+
+✔ No ESLint warnings or errors

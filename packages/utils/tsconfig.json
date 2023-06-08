@@ -1,0 +1,25 @@
+{
+  "extends": "@stolaar/tsconfig/base.json",
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "include": ["**/*.ts", "**/*.tsx"],
+    "exclude": ["node_modules", "dist"],
+    "compilerOptions": {
+      "baseUrl": "./",
+      "outDir": "./dist",
+      "incremental": true,
+      "noEmit": false,
+      "jsx": "react-jsx",
+      "paths": {
+        "@test-utils": ["./src/utils/test-utils/test-utils"]
+      }
+    }
+  }
+}

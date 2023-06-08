@@ -1,0 +1,31 @@
+{
+  "name": "@stolaar/cicd-platform",
+  "private": true,
+  "version": "0.0.1",
+  "workspaces": [
+    "docs",
+    "apps/*",
+    "packages/*",
+    "packages/**/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "lb4": "lb4"
+  },
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">=1.22.15",
+    "node": ">=18.12.1"
+  },
+  "devDependencies": {
+    "husky": "4.3.8",
+    "lint-staged": "13.1.2",
+    "turbo": "1.8.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged --config lint-staged.config.js"
+    }
+  }
+}
