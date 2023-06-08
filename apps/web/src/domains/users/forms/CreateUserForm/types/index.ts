@@ -1,3 +1,3 @@
 export interface ICreateUser {
-  onSubmit: (payload: unknown) => Promise<void>;
+  onSubmit: (payload: unknown) => Promise<void>
 }

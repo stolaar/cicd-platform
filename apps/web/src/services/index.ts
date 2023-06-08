@@ -1,1 +1,1 @@
-export * as DataService from "./data-service";
+export * as DataService from "./data-service"

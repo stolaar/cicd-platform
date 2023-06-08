@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint"
   },
   "devDependencies": {
     "@stolaar/eslint": "*",
@@ -20,6 +20,7 @@
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@mui/icons-material": "5.11.11",
+    "@mui/lab": "5.0.0-alpha.133",
     "@mui/material": "5.11.11",
     "@stolaar/utils": "*",
     "@tanstack/react-query": "4.24.10",

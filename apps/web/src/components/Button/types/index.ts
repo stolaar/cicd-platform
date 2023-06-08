@@ -1,5 +1,5 @@
-import { ForwardedRef } from "react";
-import { ButtonProps } from "@mui/material";
+import { ForwardedRef } from "react"
+import { ButtonProps } from "@mui/material"
 
 export interface IButton<T>
   extends Pick<
@@ -16,9 +16,9 @@ export interface IButton<T>
     | "size"
     | "type"
   > {
-  ref: ForwardedRef<T>;
-  rightIcon?: ButtonProps["endIcon"];
-  variant?: "text" | "outlined" | "contained";
+  ref: ForwardedRef<T>
+  rightIcon?: ButtonProps["endIcon"]
+  variant?: "text" | "outlined" | "contained"
 }
 
 export interface IButtonVariant<T>

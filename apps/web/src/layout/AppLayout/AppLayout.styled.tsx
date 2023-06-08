@@ -1,7 +1,12 @@
-import { Box, styled } from "@mui/material";
+import { Box, styled } from "@mui/material"
 
-export const StyledAppWrapper = styled(Box)({
+export const StyledAppContainer = styled(Box)({
   display: "flex",
   minHeight: "100vh",
   overflowX: "hidden",
-});
+})
+
+export const StyledMainContainer = styled(Box)(({ theme }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+}))

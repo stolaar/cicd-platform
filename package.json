@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "dev": "turbo dev",
-    "lint": "turbo lint",
+    "lint": "turbo lint -- --fix .",
     "lb4": "lb4"
   },
   "engines": {

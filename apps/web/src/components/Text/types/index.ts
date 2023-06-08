@@ -1,4 +1,4 @@
-import { TypographyProps } from "@mui/material";
+import { TypographyProps } from "@mui/material"
 
 export interface IText
   extends Pick<

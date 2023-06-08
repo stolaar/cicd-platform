@@ -1,2 +1,5 @@
-export * from "./Text";
-export * from "./Button";
+export * from "./Text"
+export * from "./Button"
+export * from "./icons"
+export * from "./Tabs"
+export * from "./SideBar"

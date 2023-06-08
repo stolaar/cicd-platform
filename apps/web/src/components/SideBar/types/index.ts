@@ -8,5 +8,5 @@ export interface INavItem {
 }
 
 export interface ISideBar extends DrawerProps {
-  navItems: INavItem[]
+  navItems?: INavItem[]
 }

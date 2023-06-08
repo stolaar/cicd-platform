@@ -1,5 +1,5 @@
-import { IButton } from "../types";
-import { Button as MUIButton } from "@mui/material";
+import { IButton } from "../types"
+import { Button as MUIButton } from "@mui/material"
 
 export const Button = <T extends HTMLButtonElement>({
   children,
@@ -34,4 +34,4 @@ export const Button = <T extends HTMLButtonElement>({
   >
     {children}
   </MUIButton>
-);
+)

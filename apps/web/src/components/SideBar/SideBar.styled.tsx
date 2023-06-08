@@ -5,8 +5,8 @@ import {
   ListItemButton,
   styled,
   Theme,
-} from "@mui/material";
-const drawerWidth = 240;
+} from "@mui/material"
+const drawerWidth = 240
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -15,7 +15,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: "hidden",
-});
+})
 
 const closedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
@@ -27,7 +27,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
-});
+})
 
 export const DrawerTrigger = styled(Fab, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -38,7 +38,7 @@ export const DrawerTrigger = styled(Fab, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
-}));
+}))
 
 export const StyledDrawer = styled(Drawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -55,11 +55,11 @@ export const StyledDrawer = styled(Drawer, {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
-}));
+}))
 
 export const StyledListButton = styled(ListItemButton)<{ open: boolean }>(
   ({ open }) => ({
     justifyContent: open ? "initial" : "center",
     minHeight: 48,
-  })
-);
+  }),
+)

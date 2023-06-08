@@ -1,2 +1,2 @@
 export * from "./types"
-export * from "./Text"
+export * from "./Tabs"

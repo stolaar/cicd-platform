@@ -1,17 +1,17 @@
-import { FC } from "react";
-import { TextField } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { ContainedButton, Text } from "@components";
-import { LABELS } from "./utils";
-import { ICreateUser } from "./types";
-import { StyledFormContainer } from "./CreateUserForm.styled";
+import { FC } from "react"
+import { TextField } from "@mui/material"
+import { useForm } from "react-hook-form"
+import { ContainedButton, Text } from "@components"
+import { LABELS } from "./utils"
+import { ICreateUser } from "./types"
+import { StyledFormContainer } from "./CreateUserForm.styled"
 
 export const CreateUserForm: FC<ICreateUser> = ({ onSubmit }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   return (
     <StyledFormContainer onSubmit={handleSubmit(onSubmit)}>
@@ -24,5 +24,5 @@ export const CreateUserForm: FC<ICreateUser> = ({ onSubmit }) => {
       />
       <ContainedButton type="submit">{LABELS.submit}</ContainedButton>
     </StyledFormContainer>
-  );
-};
+  )
+}

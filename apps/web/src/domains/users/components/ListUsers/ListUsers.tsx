@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { DataService } from "@services";
+import { useQuery } from "@tanstack/react-query"
+import { DataService } from "@services"
 import {
   Avatar,
   Box,
@@ -7,17 +7,14 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-} from "@mui/material";
-import { StyledWrapper } from "./ListUsers.styled";
-import { Text } from "@components";
-import { LABELS } from "./utils";
-import { Person } from "@mui/icons-material";
+} from "@mui/material"
+import { StyledWrapper } from "./ListUsers.styled"
+import { Text } from "@components"
+import { LABELS } from "./utils"
+import { Person } from "@mui/icons-material"
 
 export const ListUsers = () => {
-  const { data } = useQuery(
-    DataService.getUsers.queryKey,
-    DataService.getUsers
-  );
+  const { data } = useQuery(DataService.getUsers.queryKey, DataService.getUsers)
   return (
     <StyledWrapper>
       <Text variant={"h5"}>{LABELS.users}</Text>
@@ -36,5 +33,5 @@ export const ListUsers = () => {
         </List>
       </Box>
     </StyledWrapper>
-  );
-};
+  )
+}

@@ -1,2 +1,2 @@
 export * from "./ListUsers"
-export * from "./Settings/Settings"
+export * from "./Settings"
