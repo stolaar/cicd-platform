@@ -1,15 +1,16 @@
 import { inject, lifeCycleObserver, LifeCycleObserver } from "@loopback/core"
 import { juggler } from "@loopback/repository"
+import { EConfigKeys } from "../config"
 
 const config = {
-  name: "db",
+  name: EConfigKeys.dbName,
   connector: "postgresql",
   url: "",
-  host: "127.0.0.1",
-  port: 5432,
-  user: "postgres",
-  password: "1234567",
-  database: "loopback",
+  host: EConfigKeys.dbHost,
+  port: EConfigKeys.dbPort ?? 5432,
+  user: EConfigKeys.dbUser,
+  password: EConfigKeys.dbPassword,
+  database: EConfigKeys.dbName,
 }
 
 // Observe application's life cycle to disconnect the datasource when
