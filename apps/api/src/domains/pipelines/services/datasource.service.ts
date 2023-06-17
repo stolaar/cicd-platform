@@ -65,16 +65,10 @@ export class DatasourceService {
     })
 
     if (!datasource) return []
-    try {
-      const projects = await this.gitlabDatasource.getProjects(
-        datasource.name,
-        datasource.accessToken,
-      )
 
-      return projects
-    } catch (err) {
-      this.logger.error(err)
-      throw err
-    }
+    return this.gitlabDatasource.getProjects(
+      datasource.name,
+      datasource.accessToken,
+    )
   }
 }

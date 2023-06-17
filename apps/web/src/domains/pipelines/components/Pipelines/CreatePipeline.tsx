@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 const pipelineSchema = z.object({
   name: z.string(),
   branch: z.string(),
-  repository: z.string(),
+  repositoryId: z.string(),
 })
 
 type TPipelineValues = z.infer<typeof pipelineSchema>
@@ -37,7 +37,7 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
   const onCreateMutation = async (values: TPipelineValues) => {
     console.log("ON CREATE MUTAT")
     const provider = data.find(
-      (item) => item.value === values.repository,
+      (item) => item.value === values.repositoryId,
     )?.provider
     await createPipelineMutation.mutateAsync({ ...values, provider })
   }
@@ -62,7 +62,7 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
           control={methods.control}
         />
         <FormDropdown
-          name={"repository"}
+          name={"repositoryId"}
           control={methods.control}
           options={data}
           label={"Choose repository"}

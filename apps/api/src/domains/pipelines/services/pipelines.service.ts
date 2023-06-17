@@ -35,10 +35,10 @@ export class PipelinesService {
 
     if (
       datasource?.provider === DatasourceProviderEnum.GITLAB &&
-      createdPipeline.repository
+      createdPipeline.repositoryId
     ) {
-      await this.gitlabDatasource.createWebhook(
-        +createdPipeline.repository,
+      await this.gitlabDatasource.registerWebhook(
+        +createdPipeline.repositoryId,
         datasource.accessToken,
       )
     }

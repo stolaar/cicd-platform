@@ -19,7 +19,7 @@ export class Pipeline extends Entity {
   @property({
     type: "string",
   })
-  repository?: string
+  repositoryId?: string
 
   @property({
     type: "string",
