@@ -32,6 +32,8 @@
       "@domain/*": ["src/domains/*"],
       "@components/*": ["src/components/*"],
       "@components": ["src/components/index"],
+      "@form-fields": ["src/form-fields/index"],
+      "@hooks": ["src/hooks/index"],
     }
   }
 }

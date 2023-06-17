@@ -1,5 +1,5 @@
 import { INavItem } from "@components/SideBar"
-import { Apps, Settings } from "@mui/icons-material"
+import { Apps, Settings, Polyline } from "@mui/icons-material"
 
 export const navItems: INavItem[] = [
   {
@@ -11,6 +11,11 @@ export const navItems: INavItem[] = [
     label: "Settings",
     href: "/settings",
     icon: <Settings />,
+  },
+  {
+    label: "Pipelines",
+    href: "/pipelines",
+    icon: <Polyline />,
   },
 ]
 

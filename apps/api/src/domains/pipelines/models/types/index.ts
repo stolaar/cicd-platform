@@ -1,9 +1,8 @@
 import { Pipeline } from "../pipeline.model"
 import { Datasource } from "../datasource.model"
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IPipelineRelations {
-  // describe navigational properties here
+  datasource: TDatasourceWithRelations
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

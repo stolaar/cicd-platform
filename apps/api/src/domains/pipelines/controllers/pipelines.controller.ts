@@ -8,6 +8,7 @@ import {
   getJsonSchemaRef,
   requestBody,
   get,
+  param,
 } from "@loopback/rest"
 import { PipelinesService } from "../services/pipelines.service"
 import { Pipeline } from "../models"
@@ -18,7 +19,7 @@ export class PipelinesController {
   constructor(
     @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(PIPELINES_SERVICE)
-    public userService: PipelinesService,
+    public pipelinesService: PipelinesService,
   ) {}
 
   @post("/")
@@ -32,8 +33,10 @@ export class PipelinesController {
       },
     },
   })
-  createUser(@requestBody() user: Pipeline): Promise<Pipeline> {
-    return this.userService.createUser(user)
+  createPipeline(
+    @requestBody() pipeline: Pipeline & { provider: string },
+  ): Promise<void> {
+    return this.pipelinesService.createPipeline(pipeline)
   }
 
   @get("/")
@@ -49,6 +52,15 @@ export class PipelinesController {
     },
   })
   getUsers(): Promise<Pipeline[]> {
-    return this.userService.getPipelines()
+    return this.pipelinesService.getPipelines()
+  }
+
+  @post("/webhook/{provider}")
+  @response(200, {})
+  async webhook(
+    @requestBody() payload: unknown,
+    @param.path.string("provider") provider: string,
+  ): Promise<void> {
+    await this.pipelinesService.webhook(payload, provider)
   }
 }

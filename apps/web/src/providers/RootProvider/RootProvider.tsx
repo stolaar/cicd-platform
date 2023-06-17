@@ -12,7 +12,11 @@ const queryClient = new QueryClient({
   },
 })
 
-const theme = createTheme()
+const theme = createTheme({
+  palette: {
+    mode: "light",
+  },
+})
 
 export const RootProvider: FC<IRootProvider> = ({ children }) => {
   return (

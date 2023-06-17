@@ -1,4 +1,5 @@
-import { Entity, model, property } from "@loopback/repository"
+import { Entity, hasMany, model, property } from "@loopback/repository"
+import { Pipeline } from "./pipeline.model"
 
 export enum DatasourceProviderEnum {
   GITLAB = "gitlab",
@@ -16,19 +17,27 @@ export class Datasource extends Entity {
 
   @property({
     type: "string",
-    required: true,
   })
   name: string
 
   @property({
-    type: "enum",
-    postgresql: {
-      columnName: "provider",
-      dataType: "ENUM('gitlab', 'github')",
-      default: "gitlab",
-    },
+    type: "string",
+    properties: ["gitlab", "github"],
   })
   provider: DatasourceProviderEnum
+
+  @property({
+    type: "string",
+  })
+  accessToken: string
+
+  @property({
+    type: "string",
+  })
+  refreshToken: string
+
+  @hasMany(() => Pipeline)
+  pipelines: Pipeline[]
 
   constructor(data?: Partial<Datasource>) {
     super(data)

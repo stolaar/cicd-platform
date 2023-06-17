@@ -1,6 +1,6 @@
 import { FC, useState } from "react"
 import { Tabs } from "@components"
-import { GitAccountsTab } from "@domain/git-accounts/components"
+import { GitAccountsTab } from "@domain/pipelines/components"
 import { TabContext } from "@mui/lab"
 import {
   StyledPanelContainer,

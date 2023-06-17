@@ -12,9 +12,10 @@ import {
 import { DATASOURCE_SERVICE } from "../keys"
 import { DatasourceService } from "../services/datasource.service"
 import { Datasource } from "../models/datasource.model"
+import { IConnectDatasource } from "../services/types"
 
 @api({ basePath: "/datasources" })
-export class PipelinesController {
+export class DatasourceController {
   constructor(
     @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(DATASOURCE_SERVICE)
@@ -50,5 +51,29 @@ export class PipelinesController {
   })
   getUsers(): Promise<Datasource[]> {
     return this.datasourceService.getDatasource()
+  }
+
+  @post("/connect")
+  @response(200, {
+    responses: {
+      "200": {
+        description: "Datasource",
+      },
+    },
+  })
+  connectDatasource(@requestBody() payload: IConnectDatasource) {
+    return this.datasourceService.connectDatasource(payload)
+  }
+
+  @get("/repositories")
+  @response(200, {
+    responses: {
+      "200": {
+        description: "Datasource repositories",
+      },
+    },
+  })
+  getRepositories() {
+    return this.datasourceService.getRepositories()
   }
 }

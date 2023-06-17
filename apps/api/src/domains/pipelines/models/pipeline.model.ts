@@ -1,4 +1,5 @@
-import { Entity, model, property } from "@loopback/repository"
+import { belongsTo, Entity, model, property } from "@loopback/repository"
+import { Datasource } from "./datasource.model"
 
 @model()
 export class Pipeline extends Entity {
@@ -14,6 +15,19 @@ export class Pipeline extends Entity {
     required: true,
   })
   name: string
+
+  @property({
+    type: "string",
+  })
+  repository?: string
+
+  @property({
+    type: "string",
+  })
+  branch?: string
+
+  @belongsTo(() => Datasource)
+  datasourceId: number
 
   constructor(data?: Partial<Pipeline>) {
     super(data)
