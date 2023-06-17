@@ -25,3 +25,14 @@ export const getRepositories = createApiHandler(
     },
   () => ["repositories"],
 )
+
+export const getDatasources = createApiHandler(
+  async ({ signal }: QueryFunctionContext) => {
+    const { data } = await axios.get<{ provider: string; name: string }[]>(
+      "/api/datasources",
+      { signal },
+    )
+    return data
+  },
+  () => ["datasources"],
+)

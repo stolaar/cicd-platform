@@ -12,11 +12,16 @@ import { MySequence } from "./sequence"
 import { USERS_SERVICE } from "./domains/users/keys"
 import { UserService } from "./domains/users/services/user.service"
 import { format, LoggingBindings, LoggingComponent } from "@loopback/logging"
-import { DATASOURCE_SERVICE, PIPELINES_SERVICE } from "./domains/pipelines/keys"
+import {
+  DATASOURCE_SERVICE,
+  JOB_SERVICE,
+  PIPELINES_SERVICE,
+} from "./domains/pipelines/keys"
 import { DatasourceService } from "./domains/pipelines/services/datasource.service"
 import { GITLAB_DATASOURCE } from "./domains/pipelines/datasources/keys"
 import { GitlabDatasource } from "./domains/pipelines/datasources/gitlab.datasource"
 import { PipelinesService } from "./domains/pipelines/services/pipelines.service"
+import { JobService } from "./domains/pipelines/services/job.service"
 
 export { ApplicationConfig }
 
@@ -42,8 +47,7 @@ export class ApiApplication extends BootMixin(
     })
     this.configure(LoggingBindings.WINSTON_LOGGER).to({
       level: "info",
-      format: format.json(),
-      defaultMeta: { framework: "LoopBack" },
+      colorize: true,
     })
     this.configure(LoggingBindings.FLUENT_SENDER).to({
       host: process.env.FLUENTD_SERVICE_HOST ?? "localhost",
@@ -77,5 +81,6 @@ export class ApiApplication extends BootMixin(
     this.bind(DATASOURCE_SERVICE).toClass(DatasourceService)
     this.bind(GITLAB_DATASOURCE).toClass(GitlabDatasource)
     this.bind(PIPELINES_SERVICE).toClass(PipelinesService)
+    this.bind(JOB_SERVICE).toClass(JobService)
   }
 }

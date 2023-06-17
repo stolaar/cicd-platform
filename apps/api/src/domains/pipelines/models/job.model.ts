@@ -1,4 +1,4 @@
-import { Entity, model, property, hasOne } from "@loopback/repository"
+import { Entity, model, property, belongsTo } from "@loopback/repository"
 import { Pipeline } from "./pipeline.model"
 
 @model()
@@ -9,17 +9,6 @@ export class Job extends Entity {
     generated: true,
   })
   id?: number
-
-  @property({
-    type: "string",
-    required: true,
-  })
-  name: string
-
-  @property({
-    type: "string",
-  })
-  repository?: string
 
   @property({
     type: "string",
@@ -34,15 +23,31 @@ export class Job extends Entity {
   @property({
     type: "string",
   })
-  commit?: string
+  commitMessage?: string
+
+  @property({
+    type: "string",
+  })
+  commitSha?: string
+
+  @property({
+    type: "string",
+  })
+  commitLink?: string
 
   @property({
     type: "string",
   })
   author?: string
 
-  @hasOne(() => Pipeline)
-  pipeline: Pipeline
+  @belongsTo(() => Pipeline)
+  pipelineId: number
+
+  @property({
+    type: "timestamp",
+    default: () => Date.now(),
+  })
+  created_at: number
 
   constructor(data?: Partial<Job>) {
     super(data)

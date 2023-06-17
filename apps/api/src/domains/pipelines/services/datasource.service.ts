@@ -21,7 +21,7 @@ export class DatasourceService {
     return this.datasourceRepository.create(pipeline)
   }
 
-  async getDatasource() {
+  async getDatasources() {
     return this.datasourceRepository.find()
   }
 
@@ -37,7 +37,7 @@ export class DatasourceService {
 
       if (provider === DatasourceProviderEnum.GITLAB) {
         const gitlabUser = await this.gitlabDatasource.getUser(accessToken)
-        this.logger.log("Gitlab user:", gitlabUser)
+        this.logger.info("Gitlab user:", gitlabUser)
         name = gitlabUser.username ?? ""
       }
       if (existing) {

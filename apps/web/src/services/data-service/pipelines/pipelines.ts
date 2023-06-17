@@ -18,3 +18,10 @@ export const getPipelines = createApiHandler(
   },
   () => ["pipelines"],
 )
+
+export const runPipeline = createApiHandler(
+  async (pipelineId: number) => {
+    await axios.post(`/api/pipelines/run/${pipelineId}`)
+  },
+  ["runPipeline"],
+)

@@ -1,5 +1,12 @@
-import { belongsTo, Entity, model, property } from "@loopback/repository"
+import {
+  belongsTo,
+  Entity,
+  hasMany,
+  model,
+  property,
+} from "@loopback/repository"
 import { Datasource } from "./datasource.model"
+import { Job } from "./job.model"
 
 @model()
 export class Pipeline extends Entity {
@@ -28,6 +35,9 @@ export class Pipeline extends Entity {
 
   @belongsTo(() => Datasource)
   datasourceId: number
+
+  @hasMany(() => Job)
+  jobs: Job[]
 
   constructor(data?: Partial<Pipeline>) {
     super(data)

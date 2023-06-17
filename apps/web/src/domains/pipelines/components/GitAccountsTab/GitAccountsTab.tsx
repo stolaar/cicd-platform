@@ -1,11 +1,18 @@
 import { FC, useEffect, useRef } from "react"
 import { TabPanel } from "@mui/lab"
-import { Box, Button } from "@mui/material"
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+} from "@mui/material"
 import { useRouter } from "next/router"
 import { GitHub } from "@mui/icons-material"
-import { Gitlab } from "@components"
+import { Gitlab, Text } from "@components"
 import { DataService } from "@services"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 
 export const GitAccountsTab: FC = () => {
   const router = useRouter()
@@ -14,6 +21,11 @@ export const GitAccountsTab: FC = () => {
   const connectDatasourceMutation = useMutation({
     mutationFn: DataService.connectDatasource,
     mutationKey: DataService.connectDatasource.queryKey,
+  })
+
+  const { data = [] } = useQuery({
+    queryKey: DataService.getDatasources.queryKey(),
+    queryFn: DataService.getDatasources,
   })
 
   useEffect(() => {
@@ -51,22 +63,37 @@ export const GitAccountsTab: FC = () => {
 
   return (
     <TabPanel value={"git"}>
-      <Box sx={{ display: "flex", gap: "10px" }}>
-        <Button
-          sx={{ background: "black" }}
-          variant={"contained"}
-          startIcon={<GitHub />}
-          onClick={onConnectGithubAccount}
-        >
-          Connect github account
-        </Button>
-        <Button
-          variant={"contained"}
-          startIcon={<Gitlab />}
-          onClick={onConnectGitlabAccount}
-        >
-          Connect gitlab account
-        </Button>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <Box sx={{ display: "flex", gap: "10px" }}>
+          <Button
+            sx={{ background: "black" }}
+            variant={"contained"}
+            startIcon={<GitHub />}
+            onClick={onConnectGithubAccount}
+          >
+            Connect github account
+          </Button>
+          <Button
+            variant={"contained"}
+            startIcon={<Gitlab />}
+            onClick={onConnectGitlabAccount}
+          >
+            Connect gitlab account
+          </Button>
+        </Box>
+        <Box>
+          <Text variant={"h4"}>Connected accounts</Text>
+          <Divider sx={{ marginBottom: "15px" }} />
+          {data.map(({ provider, name }) => (
+            <Card key={name}>
+              <CardHeader
+                sx={{ textTransform: "capitalize" }}
+                title={provider}
+              />
+              <CardContent>{name}</CardContent>
+            </Card>
+          ))}
+        </Box>
       </Box>
     </TabPanel>
   )

@@ -50,7 +50,7 @@ export class DatasourceController {
     },
   })
   getUsers(): Promise<Datasource[]> {
-    return this.datasourceService.getDatasource()
+    return this.datasourceService.getDatasources()
   }
 
   @post("/connect")

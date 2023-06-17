@@ -51,7 +51,7 @@ export class PipelinesController {
       },
     },
   })
-  getUsers(): Promise<Pipeline[]> {
+  getUsers() {
     return this.pipelinesService.getPipelines()
   }
 
@@ -62,5 +62,11 @@ export class PipelinesController {
     @param.path.string("provider") provider: string,
   ): Promise<void> {
     await this.pipelinesService.webhook(payload, provider)
+  }
+
+  @post("/run/{id}")
+  @response(200, {})
+  runPipeline(@param.path.number("id") id: number) {
+    return this.pipelinesService.runPipeline(id)
   }
 }

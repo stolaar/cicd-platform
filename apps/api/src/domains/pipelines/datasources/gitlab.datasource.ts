@@ -6,6 +6,7 @@ import {
   IGitlabTokenResponse,
   IGitlabUser,
 } from "./types"
+import { spawnSync } from "child_process"
 
 const gitlabBaseUrl = "https://gitlab.com"
 
@@ -71,6 +72,57 @@ export class GitlabDatasource implements IDatasource {
           },
         },
       )
+    } catch (err) {
+      throw new GitlabError(
+        err.response?.data?.error_description,
+        err.response.status,
+      )
+    }
+  }
+
+  async cloneRepository(projectId: number, accessToken: string, path: string) {
+    try {
+      const {
+        data: { http_url_to_repo },
+      } = await axios.get<{
+        http_url_to_repo: string
+      }>(`${gitlabBaseUrl}/api/v4/projects/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      const cloneUrl = http_url_to_repo.replace(
+        "https://",
+        `https://oauth2:${accessToken}@`,
+      )
+      spawnSync("git", ["clone", cloneUrl, path])
+    } catch (err) {
+      throw new GitlabError(
+        err.response?.data?.error_description,
+        err.response.status,
+      )
+    }
+  }
+
+  async getBranch(projectId: number, accessToken: string, branch?: string) {
+    try {
+      const { data } = await axios.get<any[]>(
+        `${gitlabBaseUrl}/api/v4/projects/${projectId}/repository/branches?search=${branch}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      )
+      return data.map(({ name, commit }) => ({
+        id: commit.id,
+        commitMessage: commit.message,
+        author: commit.author_name,
+        commitSha: commit.short_id,
+        commitLink: commit.web_url,
+        branch: name,
+      }))
     } catch (err) {
       throw new GitlabError(
         err.response?.data?.error_description,
