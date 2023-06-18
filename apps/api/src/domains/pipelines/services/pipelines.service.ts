@@ -8,9 +8,10 @@ import { DatasourceRepository } from "../repositories/datasource.repository"
 import { DatasourceProviderEnum } from "../models/datasource.model"
 import { LoggingBindings, WinstonLogger } from "@loopback/logging"
 import path from "path"
-import { JOB_SERVICE } from "../keys"
+import { JOB_SERVICE, RUNNER_SERVICE } from "../keys"
 import { JobService } from "./job.service"
 import { Socket } from "socket.io-client"
+import { RunnerService } from "./runner.service"
 
 export class PipelinesService {
   constructor(
@@ -20,6 +21,8 @@ export class PipelinesService {
     public gitlabDatasource: GitlabDatasource,
     @inject(JOB_SERVICE)
     public jobService: JobService,
+    @inject(RUNNER_SERVICE)
+    public runnerService: RunnerService,
     @repository(PipelinesRepository)
     private pipelineRepository: PipelinesRepository,
     @repository(DatasourceRepository)
@@ -106,7 +109,7 @@ export class PipelinesService {
             commitLink: lastCommit.commitLink,
             branch: lastCommit.branch,
           })
-          this.jobService.startJob(job)
+          this.runnerService.runJob(pipeline, job)
         }
       }
     }

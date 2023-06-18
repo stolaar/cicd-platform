@@ -17,6 +17,15 @@ export const PipelineStatus: FC<IPipelineStatus> = () => {
           if (jobId === currentJobId) setStatus(status)
         },
       )
+
+      socket.on(
+        "pipelineLogs",
+        ({ logs, jobId }: { logs: string; jobId: string }) => {
+          if (jobId === currentJobId) {
+            console.log("pipelineLogs", logs)
+          }
+        },
+      )
     }
   }, [socket, setStatus, currentJobId])
 
