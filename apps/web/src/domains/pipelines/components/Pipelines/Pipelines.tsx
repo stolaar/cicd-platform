@@ -9,6 +9,7 @@ import { Box, IconButton } from "@mui/material"
 import Link from "next/link"
 import { PlayCircle, Delete } from "@mui/icons-material"
 import { PipelineStatus } from "@domain/pipelines/components/Pipelines/components/PipelineStatus"
+import { PipelineRow } from "@domain/pipelines/components/Pipelines/components/PipelineRow"
 
 export const Pipelines: FC = () => {
   const [
@@ -121,6 +122,9 @@ export const Pipelines: FC = () => {
       <CreatePipeline onClose={closeCreatePipeline} open={isCreatePipeline} />
       <Box>
         <DataGrid
+          slots={{
+            row: PipelineRow,
+          }}
           autoHeight
           columns={pipelineColumns}
           rows={data}

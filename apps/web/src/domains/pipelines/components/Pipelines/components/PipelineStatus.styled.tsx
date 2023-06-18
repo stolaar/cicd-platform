@@ -17,6 +17,7 @@ export const StyledAlert = styled(Alert)<Omit<IPipelineStatus, "id">>(
       backgroundColor,
       color: palette.common.white,
       textTransform: "uppercase",
+      padding: "5px",
     }
   },
 )

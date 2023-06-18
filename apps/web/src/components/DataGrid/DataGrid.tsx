@@ -18,7 +18,7 @@ export const DataGrid: FC<IDataGrid> = ({
   className,
   columnBuffer,
   columns,
-  components,
+  slots,
   componentsProps,
   getRowId,
   getRowClassName,
@@ -47,7 +47,7 @@ export const DataGrid: FC<IDataGrid> = ({
     columns={columns}
     slots={{
       pagination: DataGridTablePagination,
-      ...components,
+      ...slots,
     }}
     slotProps={componentsProps}
     disableColumnMenu

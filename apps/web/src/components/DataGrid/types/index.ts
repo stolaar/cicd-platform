@@ -16,7 +16,7 @@ export interface IDataGrid
     | "columnBuffer"
     | "columns"
     | "componentsProps"
-    | "components"
+    | "slots"
     | "density"
     | "getRowId"
     | "getRowHeight"

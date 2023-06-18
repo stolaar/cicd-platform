@@ -6,6 +6,7 @@ import { getWebSocketMetadata } from "./decorators/websocket.decorator"
 // @ts-ignore
 import { WebSocketControllerFactory } from "./websocket-controller-factory"
 import { Server as SocketIOServer } from "socket.io"
+import { Namespace } from "@loopback/socketio"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type SockIOMiddleware = (socket: Socket, fn: (err?: any) => void) => void
@@ -15,6 +16,7 @@ export type SockIOMiddleware = (socket: Socket, fn: (err?: any) => void) => void
  */
 export class WebSocketServer extends Context {
   private io: Server
+  public nsp: Server | Namespace
 
   constructor(
     public readonly httpServer: HttpServer,
@@ -43,19 +45,20 @@ export class WebSocketServer extends Context {
       namespace = meta && meta.namespace
     }
 
-    const nsp = namespace ? this.io.of(namespace) : this.io
+    this.nsp = namespace ? this.io.of(namespace) : this.io
     /* eslint-disable @typescript-eslint/no-misused-promises */
-    nsp.on("connection", async (socket) => {
+    this.nsp.on("connection", async (socket) => {
       // Create a request context
       const reqCtx = new Context(this)
       // Bind websocket
       reqCtx.bind("ws.socket").to(socket)
+      reqCtx.bind("io.socket").to(this.nsp)
       // Instantiate the controller instance
       await new WebSocketControllerFactory(reqCtx, ControllerClass).create(
         socket,
       )
     })
-    return nsp
+    return this.nsp
   }
 
   /**

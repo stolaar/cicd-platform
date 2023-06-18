@@ -16,22 +16,23 @@ import {
   DATASOURCE_SERVICE,
   JOB_SERVICE,
   PIPELINES_SERVICE,
+  RUNNER_SERVICE,
 } from "./domains/pipelines/keys"
 import { DatasourceService } from "./domains/pipelines/services/datasource.service"
 import { GITLAB_DATASOURCE } from "./domains/pipelines/datasources/keys"
 import { GitlabDatasource } from "./domains/pipelines/datasources/gitlab.datasource"
 import { PipelinesService } from "./domains/pipelines/services/pipelines.service"
 import { JobService } from "./domains/pipelines/services/job.service"
-import io from "socket.io-client"
+import { Namespace, Server } from "@loopback/socketio"
+import { RunnerService } from "./domains/pipelines/services/runner.service"
 
 export { ApplicationConfig }
 
 export class ApiApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
-  constructor(options: ApplicationConfig = {}, serverUrl?: string) {
+  constructor(options: ApplicationConfig = {}) {
     super(options)
-    console.log({ serverUrl })
     this.setupBindings()
 
     this.sequence(MySequence)
@@ -83,9 +84,10 @@ export class ApiApplication extends BootMixin(
     this.bind(GITLAB_DATASOURCE).toClass(GitlabDatasource)
     this.bind(PIPELINES_SERVICE).toClass(PipelinesService)
     this.bind(JOB_SERVICE).toClass(JobService)
+    this.bind(RUNNER_SERVICE).toClass(RunnerService)
   }
 
-  bindSocketConnection(socket: ReturnType<typeof io>) {
+  bindSocketConnection(socket: Server | Namespace) {
     this.bind("socket.connection").to(socket)
   }
 }

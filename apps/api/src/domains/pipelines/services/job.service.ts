@@ -3,11 +3,15 @@ import { inject } from "@loopback/core"
 import { LoggingBindings, WinstonLogger } from "@loopback/logging"
 import { Job } from "../models/job.model"
 import { JobRepository } from "../repositories/job.repository"
+import { RUNNER_SERVICE } from "../keys"
+import { RunnerService } from "./runner.service"
 
 export class JobService {
   constructor(
     @inject(LoggingBindings.WINSTON_LOGGER)
     private logger: WinstonLogger,
+    @inject(RUNNER_SERVICE)
+    private runnerService: RunnerService,
     @repository(JobRepository)
     private jobRepository: JobRepository,
   ) {}
@@ -31,5 +35,9 @@ export class JobService {
     return this.jobRepository.deleteAll({
       pipelineId,
     })
+  }
+
+  async startJob(job: DataObject<Job>) {
+    return this.runnerService.runJob(job)
   }
 }

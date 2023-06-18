@@ -68,7 +68,7 @@ export class PipelinesService {
   }
 
   async runPipeline(pipelineId: number) {
-    this.socket.emit("job-started", "radi")
+    this.socket.emit("pipelineStatus", { status: "queued" })
     const pipeline = await this.pipelineRepository.findById(pipelineId)
     if (!pipeline) {
       throw new Error("Pipeline not found")
@@ -97,15 +97,16 @@ export class PipelinesService {
           pipeline.branch,
         )
         if (lastCommit) {
-          await this.jobService.createJob({
+          const job = await this.jobService.createJob({
             commitMessage: lastCommit.commitMessage,
             pipelineId: pipeline.id,
             commitSha: lastCommit.commitSha,
-            status: "pending",
+            status: "queued",
             author: lastCommit.author,
             commitLink: lastCommit.commitLink,
             branch: lastCommit.branch,
           })
+          this.jobService.startJob(job)
         }
       }
     }

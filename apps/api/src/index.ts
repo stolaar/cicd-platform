@@ -14,7 +14,7 @@ export async function main(options: ApplicationConfig = {}) {
 
   socketClient.on("connect", () => console.log("Connected from main"))
 
-  await app.lbApp.bindSocketConnection(socketClient)
+  await app.lbApp.bindSocketConnection(app.wsServer.nsp)
 
   console.log("listening on %s", app.httpServer.url)
 

@@ -1,30 +1,28 @@
 import { FC, useEffect } from "react"
 import { IPipelineStatus } from "./types"
 import { StyledAlert } from "./PipelineStatus.styled"
-import io from "socket.io-client"
-import { ContainedButton } from "@components"
+import { usePipelineInfo } from "@domain/pipelines/components/Pipelines/providers/usePipelineInfo"
+import { useSocket } from "../../../../../providers/SocketProvider/useSocket"
+import { TStatus } from "@domain/pipelines/components/Pipelines/providers/types"
 
-const socket = io("http://localhost:8080/test")
+export const PipelineStatus: FC<IPipelineStatus> = () => {
+  const { pipelineStatus, setStatus, jobId: currentJobId } = usePipelineInfo()
+  const { socket } = useSocket()
 
-socket.on("connect", () => {
-  console.log(`Connected to server `)
-})
-
-export const PipelineStatus: FC<IPipelineStatus> = ({ status, id }) => {
   useEffect(() => {
-    socket.on(`job-1`, (data) => console.log("Data from server: ", data))
-  }, [])
+    if (socket) {
+      socket.on(
+        "pipelineStatus",
+        ({ status, jobId }: { status: TStatus; jobId: string }) => {
+          if (jobId === currentJobId) setStatus(status)
+        },
+      )
+    }
+  }, [socket, setStatus, currentJobId])
 
   return (
-    <StyledAlert icon={false} status={status}>
-      {status}
-      <ContainedButton
-        onClick={() => {
-          socket.emit("test", { id })
-        }}
-      >
-        Test socket
-      </ContainedButton>
+    <StyledAlert icon={false} status={pipelineStatus}>
+      {pipelineStatus}
     </StyledAlert>
   )
 }
