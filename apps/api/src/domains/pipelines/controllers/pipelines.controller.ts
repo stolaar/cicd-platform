@@ -1,6 +1,7 @@
 import { inject } from "@loopback/core"
 import {
   post,
+  del,
   api,
   Request,
   response,
@@ -53,6 +54,12 @@ export class PipelinesController {
   })
   getUsers() {
     return this.pipelinesService.getPipelines()
+  }
+
+  @del("/{id}")
+  @response(200, {})
+  deletePipeline(@param.path.number("id") id: number) {
+    return this.pipelinesService.deletePipeline(id)
   }
 
   @post("/webhook/{provider}")

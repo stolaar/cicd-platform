@@ -9,19 +9,19 @@ import { RestApplication } from "@loopback/rest"
 import { ServiceMixin } from "@loopback/service-proxy"
 import path from "path"
 import { MySequence } from "./sequence"
-import { USERS_SERVICE } from "./domains/users/keys"
-import { UserService } from "./domains/users/services/user.service"
-import { format, LoggingBindings, LoggingComponent } from "@loopback/logging"
+import { USERS_SERVICE } from "../../domains/users/keys"
+import { UserService } from "../../domains/users/services/user.service"
+import { LoggingBindings, LoggingComponent } from "@loopback/logging"
 import {
   DATASOURCE_SERVICE,
   JOB_SERVICE,
   PIPELINES_SERVICE,
-} from "./domains/pipelines/keys"
-import { DatasourceService } from "./domains/pipelines/services/datasource.service"
-import { GITLAB_DATASOURCE } from "./domains/pipelines/datasources/keys"
-import { GitlabDatasource } from "./domains/pipelines/datasources/gitlab.datasource"
-import { PipelinesService } from "./domains/pipelines/services/pipelines.service"
-import { JobService } from "./domains/pipelines/services/job.service"
+} from "../../domains/pipelines/keys"
+import { DatasourceService } from "../../domains/pipelines/services/datasource.service"
+import { GITLAB_DATASOURCE } from "../../domains/pipelines/datasources/keys"
+import { GitlabDatasource } from "../../domains/pipelines/datasources/gitlab.datasource"
+import { PipelinesService } from "../../domains/pipelines/services/pipelines.service"
+import { JobService } from "../../domains/pipelines/services/job.service"
 
 export { ApplicationConfig }
 

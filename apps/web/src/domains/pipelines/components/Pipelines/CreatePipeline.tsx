@@ -2,7 +2,7 @@ import { FC } from "react"
 import { ICreatePipeline } from "./types"
 import { useForm } from "react-hook-form"
 import { FormTextField, FormDropdown } from "@form-fields"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { DataService } from "@services"
 import { Dialog } from "@components/Dialog/Dialog"
 import { ContainedButton } from "@components"
@@ -23,6 +23,8 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
     resolver: zodResolver(pipelineSchema),
   })
 
+  const queryClient = useQueryClient()
+
   const { data = [] } = useQuery({
     queryKey: DataService.getRepositories.queryKey(),
     queryFn: DataService.getRepositories(),
@@ -32,10 +34,13 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
   const createPipelineMutation = useMutation({
     mutationKey: DataService.createPipeline.queryKey,
     mutationFn: DataService.createPipeline,
+    onSuccess: () => {
+      onClose()
+      return queryClient.invalidateQueries(DataService.getPipelines.queryKey())
+    },
   })
 
   const onCreateMutation = async (values: TPipelineValues) => {
-    console.log("ON CREATE MUTAT")
     const provider = data.find(
       (item) => item.value === values.repositoryId,
     )?.provider

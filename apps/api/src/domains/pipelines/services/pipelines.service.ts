@@ -92,21 +92,27 @@ export class PipelinesService {
           datasource.accessToken,
           pipeline.branch,
         )
-        if (lastCommit)
+        if (lastCommit) {
           await this.jobService.createJob({
             commitMessage: lastCommit.commitMessage,
             pipelineId: pipeline.id,
             commitSha: lastCommit.commitSha,
-            status: "running",
+            status: "pending",
             author: lastCommit.author,
             commitLink: lastCommit.commitLink,
             branch: lastCommit.branch,
           })
+        }
       }
     }
   }
 
   async webhook(payload: unknown, provider: string) {
     this.logger.info("Webhook payload:", provider, payload)
+  }
+
+  async deletePipeline(pipelineId: number) {
+    await this.jobService.deleteJobs(pipelineId)
+    await this.pipelineRepository.deleteById(pipelineId)
   }
 }

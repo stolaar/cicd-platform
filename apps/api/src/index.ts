@@ -1,17 +1,15 @@
-import { ApplicationConfig, ApiApplication } from "./application"
+import { ApplicationConfig } from "./applications/api/application"
+import { App } from "./app"
 
-export * from "./application"
+export * from "./applications/api/application"
+export * from "./applications/websocket"
 
 export async function main(options: ApplicationConfig = {}) {
-  const app = new ApiApplication(options)
+  const app = new App(options)
   await app.boot()
   await app.start()
 
-  await app.migrateSchema()
-
-  const url = app.restServer.url
-  console.log(`Server is running at ${url}`)
-  console.log(`Try ${url}/ping`)
+  console.log("listening on %s", app.httpServer.url)
 
   return app
 }

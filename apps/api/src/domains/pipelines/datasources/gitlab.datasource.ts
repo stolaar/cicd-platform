@@ -117,7 +117,7 @@ export class GitlabDatasource implements IDatasource {
       )
       return data.map(({ name, commit }) => ({
         id: commit.id,
-        commitMessage: commit.message,
+        commitMessage: commit.message?.split("\n").shift(),
         author: commit.author_name,
         commitSha: commit.short_id,
         commitLink: commit.web_url,

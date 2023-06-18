@@ -1,4 +1,4 @@
-import { ApiApplication } from "../../index"
+import { ApiApplication } from "../../applications/api/application"
 import {
   createRestAppClient,
   givenHttpServerConfig,

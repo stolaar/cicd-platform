@@ -26,4 +26,10 @@ export class JobService {
       },
     })
   }
+
+  async deleteJobs(pipelineId: number) {
+    return this.jobRepository.deleteAll({
+      pipelineId,
+    })
+  }
 }

@@ -25,3 +25,10 @@ export const runPipeline = createApiHandler(
   },
   ["runPipeline"],
 )
+
+export const deletePipeline = createApiHandler(
+  async (pipelineId: number) => {
+    await axios.delete(`/api/pipelines/${pipelineId}`)
+  },
+  ["deletePipeline"],
+)

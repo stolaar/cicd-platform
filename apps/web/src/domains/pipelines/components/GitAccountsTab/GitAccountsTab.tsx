@@ -12,15 +12,18 @@ import { useRouter } from "next/router"
 import { GitHub } from "@mui/icons-material"
 import { Gitlab, Text } from "@components"
 import { DataService } from "@services"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const GitAccountsTab: FC = () => {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const datasourceCodeRef = useRef(false)
 
   const connectDatasourceMutation = useMutation({
     mutationFn: DataService.connectDatasource,
     mutationKey: DataService.connectDatasource.queryKey,
+    onSuccess: () =>
+      queryClient.invalidateQueries(DataService.getDatasources.queryKey()),
   })
 
   const { data = [] } = useQuery({
@@ -85,12 +88,12 @@ export const GitAccountsTab: FC = () => {
           <Text variant={"h4"}>Connected accounts</Text>
           <Divider sx={{ marginBottom: "15px" }} />
           {data.map(({ provider, name }) => (
-            <Card key={name}>
+            <Card sx={{ padding: "5px" }} key={name}>
               <CardHeader
-                sx={{ textTransform: "capitalize" }}
+                sx={{ textTransform: "capitalize", padding: "5px" }}
                 title={provider}
               />
-              <CardContent>{name}</CardContent>
+              <CardContent sx={{ padding: "5px" }}>{name}</CardContent>
             </Card>
           ))}
         </Box>

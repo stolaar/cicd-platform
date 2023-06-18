@@ -1,4 +1,4 @@
-import { ApiApplication } from "./application"
+import { ApiApplication } from "./applications/api/application"
 
 export async function migrate(args: string[]) {
   const existingSchema = args.includes("--rebuild") ? "drop" : "alter"

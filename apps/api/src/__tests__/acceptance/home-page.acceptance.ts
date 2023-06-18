@@ -1,5 +1,5 @@
 import { Client } from "@loopback/testlab"
-import { ApiApplication } from "../../index"
+import { ApiApplication } from "../../applications/api/application"
 import { setupApplication } from "./test-helper"
 
 describe("HomePage", () => {

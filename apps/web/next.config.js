@@ -12,7 +12,7 @@ const nextConfig = {
     return [
       {
         source: `/api/:ctrl*`,
-        destination: `${process.env.BACKEND_URL}/:ctrl*`,
+        destination: `${process.env.BACKEND_URL}/api/:ctrl*`,
       },
     ]
   },
