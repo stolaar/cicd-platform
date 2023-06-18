@@ -18,6 +18,7 @@ export interface IButton<T>
   > {
   ref: ForwardedRef<T>
   rightIcon?: ButtonProps["endIcon"]
+  leftIcon?: ButtonProps["startIcon"]
   variant?: "text" | "outlined" | "contained"
 }
 

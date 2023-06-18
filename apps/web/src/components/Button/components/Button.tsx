@@ -16,8 +16,10 @@ export const Button = <T extends HTMLButtonElement>({
   size,
   type,
   variant,
+  leftIcon,
 }: IButton<T>) => (
   <MUIButton
+    startIcon={leftIcon}
     className={className}
     color={color}
     disableElevation={disableElevation}

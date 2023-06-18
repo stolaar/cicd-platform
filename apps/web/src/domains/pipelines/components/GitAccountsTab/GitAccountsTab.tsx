@@ -1,18 +1,25 @@
 import { FC, useEffect, useRef } from "react"
 import { TabPanel } from "@mui/lab"
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-} from "@mui/material"
+import { Box } from "@mui/material"
 import { useRouter } from "next/router"
 import { GitHub } from "@mui/icons-material"
-import { Gitlab, Text } from "@components"
+import { ContainedButton, Gitlab, Text } from "@components"
 import { DataService } from "@services"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { LABELS } from "./utils/labels"
+import {
+  githubAuthUrl,
+  gitlabAuthUrl,
+} from "@domain/pipelines/components/GitAccountsTab/utils/config"
+import {
+  StyledButtonsContainer,
+  StyledCard,
+  StyledCardContent,
+  StyledCardHeader,
+  StyledContainer,
+  StyledDivider,
+  StyledGithubButton,
+} from "@domain/pipelines/components/GitAccountsTab/GitAccountsTab.styled"
 
 export const GitAccountsTab: FC = () => {
   const router = useRouter()
@@ -43,61 +50,41 @@ export const GitAccountsTab: FC = () => {
   }, [router.query])
 
   const onConnectGithubAccount = () => {
-    const url = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&scope=user:email,repo`
-    router.push(url)
+    router.push(githubAuthUrl)
   }
 
   const onConnectGitlabAccount = () => {
-    const redirectUri = "http://localhost:3000/settings"
-    const scopes = [
-      "api",
-      "read_api",
-      "read_user",
-      "read_repository",
-      "write_repository",
-      "openid",
-      "profile",
-    ]
-    const url = `https://gitlab.com/oauth/authorize?client_id=${
-      process.env.NEXT_PUBLIC_GITLAB_CLIENT_ID
-    }&redirect_uri=${redirectUri}&response_type=code&scope=${scopes.join("+")}`
-    router.push(url)
+    router.push(gitlabAuthUrl)
   }
 
   return (
     <TabPanel value={"git"}>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        <Box sx={{ display: "flex", gap: "10px" }}>
-          <Button
-            sx={{ background: "black" }}
-            variant={"contained"}
-            startIcon={<GitHub />}
+      <StyledContainer>
+        <StyledButtonsContainer>
+          <StyledGithubButton
+            leftIcon={<GitHub />}
             onClick={onConnectGithubAccount}
           >
-            Connect github account
-          </Button>
-          <Button
-            variant={"contained"}
-            startIcon={<Gitlab />}
+            {LABELS.connectGithub}
+          </StyledGithubButton>
+          <ContainedButton
+            leftIcon={<Gitlab />}
             onClick={onConnectGitlabAccount}
           >
-            Connect gitlab account
-          </Button>
-        </Box>
+            {LABELS.connectGitlab}
+          </ContainedButton>
+        </StyledButtonsContainer>
         <Box>
-          <Text variant={"h4"}>Connected accounts</Text>
-          <Divider sx={{ marginBottom: "15px" }} />
+          <Text variant={"h4"}>{LABELS.connectedAccounts}</Text>
+          <StyledDivider />
           {data.map(({ provider, name }) => (
-            <Card sx={{ padding: "5px" }} key={name}>
-              <CardHeader
-                sx={{ textTransform: "capitalize", padding: "5px" }}
-                title={provider}
-              />
-              <CardContent sx={{ padding: "5px" }}>{name}</CardContent>
-            </Card>
+            <StyledCard key={name}>
+              <StyledCardHeader title={provider} />
+              <StyledCardContent>{name}</StyledCardContent>
+            </StyledCard>
           ))}
         </Box>
-      </Box>
+      </StyledContainer>
     </TabPanel>
   )
 }
