@@ -8,29 +8,30 @@ import { RepositoryMixin } from "@loopback/repository"
 import { RestApplication } from "@loopback/rest"
 import { ServiceMixin } from "@loopback/service-proxy"
 import path from "path"
-import { MySequence } from "./sequence"
-import { USERS_SERVICE } from "../../domains/users/keys"
-import { UserService } from "../../domains/users/services/user.service"
+import { MySequence } from "./applications/api/sequence"
+import { USERS_SERVICE } from "./domains/users/keys"
+import { UserService } from "./domains/users/services/user.service"
 import { LoggingBindings, LoggingComponent } from "@loopback/logging"
 import {
   DATASOURCE_SERVICE,
   JOB_SERVICE,
   PIPELINES_SERVICE,
-} from "../../domains/pipelines/keys"
-import { DatasourceService } from "../../domains/pipelines/services/datasource.service"
-import { GITLAB_DATASOURCE } from "../../domains/pipelines/datasources/keys"
-import { GitlabDatasource } from "../../domains/pipelines/datasources/gitlab.datasource"
-import { PipelinesService } from "../../domains/pipelines/services/pipelines.service"
-import { JobService } from "../../domains/pipelines/services/job.service"
+} from "./domains/pipelines/keys"
+import { DatasourceService } from "./domains/pipelines/services/datasource.service"
+import { GITLAB_DATASOURCE } from "./domains/pipelines/datasources/keys"
+import { GitlabDatasource } from "./domains/pipelines/datasources/gitlab.datasource"
+import { PipelinesService } from "./domains/pipelines/services/pipelines.service"
+import { JobService } from "./domains/pipelines/services/job.service"
+import io from "socket.io-client"
 
 export { ApplicationConfig }
 
 export class ApiApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
-  constructor(options: ApplicationConfig = {}) {
+  constructor(options: ApplicationConfig = {}, serverUrl?: string) {
     super(options)
-
+    console.log({ serverUrl })
     this.setupBindings()
 
     this.sequence(MySequence)
@@ -82,5 +83,9 @@ export class ApiApplication extends BootMixin(
     this.bind(GITLAB_DATASOURCE).toClass(GitlabDatasource)
     this.bind(PIPELINES_SERVICE).toClass(PipelinesService)
     this.bind(JOB_SERVICE).toClass(JobService)
+  }
+
+  bindSocketConnection(socket: ReturnType<typeof io>) {
+    this.bind("socket.connection").to(socket)
   }
 }

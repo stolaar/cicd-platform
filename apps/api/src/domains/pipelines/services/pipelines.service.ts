@@ -10,6 +10,7 @@ import { LoggingBindings, WinstonLogger } from "@loopback/logging"
 import path from "path"
 import { JOB_SERVICE } from "../keys"
 import { JobService } from "./job.service"
+import { Socket } from "socket.io-client"
 
 export class PipelinesService {
   constructor(
@@ -23,6 +24,8 @@ export class PipelinesService {
     private pipelineRepository: PipelinesRepository,
     @repository(DatasourceRepository)
     private datasourceRepository: DatasourceRepository,
+    @inject("socket.connection")
+    private socket: Socket,
   ) {}
   async createPipeline({
     provider,
@@ -65,6 +68,7 @@ export class PipelinesService {
   }
 
   async runPipeline(pipelineId: number) {
+    this.socket.emit("job-started", "radi")
     const pipeline = await this.pipelineRepository.findById(pipelineId)
     if (!pipeline) {
       throw new Error("Pipeline not found")

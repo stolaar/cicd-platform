@@ -1,13 +1,20 @@
-import { ApplicationConfig } from "./applications/api/application"
+import { ApplicationConfig } from "./rest.application"
 import { App } from "./app"
+import io from "socket.io-client"
 
-export * from "./applications/api/application"
+export * from "./rest.application"
 export * from "./applications/websocket"
 
 export async function main(options: ApplicationConfig = {}) {
   const app = new App(options)
   await app.boot()
   await app.start()
+
+  const socketClient = io(`${app.httpServer.url}/test`)
+
+  socketClient.on("connect", () => console.log("Connected from main"))
+
+  await app.lbApp.bindSocketConnection(socketClient)
 
   console.log("listening on %s", app.httpServer.url)
 

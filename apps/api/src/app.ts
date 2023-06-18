@@ -3,7 +3,7 @@ import { HttpServer } from "@loopback/http-server"
 import express from "express"
 import * as path from "path"
 import { WebSocketController, WebSocketServer } from "./applications/websocket"
-import { ApiApplication } from "./applications/api/application"
+import { ApiApplication } from "./rest.application"
 
 // tslint:disable:no-any
 
@@ -20,14 +20,15 @@ export class App extends Application {
      */
     const expressApp = express()
     const root = path.resolve(__dirname, "../../public")
-    this.lbApp = new ApiApplication(options)
-    expressApp.use("/", express.static(root))
 
     // Create an http server backed by the Express app
     this.httpServer = new HttpServer(expressApp, {
       ...options.websocket,
       port: 8080,
     })
+
+    this.lbApp = new ApiApplication(options)
+    expressApp.use("/", express.static(root))
 
     expressApp.use("/api", this.lbApp.requestHandler)
 

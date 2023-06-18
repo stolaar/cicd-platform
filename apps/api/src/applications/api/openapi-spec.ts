@@ -1,5 +1,5 @@
 import { ApplicationConfig } from "@loopback/core"
-import { ApiApplication } from "./application"
+import { ApiApplication } from "../../rest.application"
 
 /**
  * Export the OpenAPI spec from the application

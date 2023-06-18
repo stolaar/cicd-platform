@@ -13,7 +13,7 @@ export class WebSocketController {
    * @param socket
    */
   @ws.connect()
-  connect(socket: Socket) {
+  connect() {
     console.log("Client connected: %s", this.socket.id)
   }
 
@@ -23,7 +23,7 @@ export class WebSocketController {
    */
   @ws.subscribe(/.+/)
   logMessage(...args: unknown[]) {
-    console.log("Message: %s", args)
+    console.log("Message", ...args)
   }
 
   /**

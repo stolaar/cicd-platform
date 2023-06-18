@@ -53,7 +53,6 @@ export class DatasourceService {
         refreshToken,
       })
     } catch (err) {
-      this.logger.error(err)
       throw err
     }
   }
