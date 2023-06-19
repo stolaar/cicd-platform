@@ -1,6 +1,7 @@
 import { Socket } from "socket.io"
 import { ws } from "./decorators/websocket.decorator"
 import { inject } from "@loopback/core"
+import { LoggingBindings, WinstonLogger } from "@loopback/logging"
 
 @ws("/test")
 export class WebSocketController {
@@ -9,6 +10,8 @@ export class WebSocketController {
     private socket: Socket,
     @inject("io.socket") // Equivalent to `@inject('ws')`
     private io: Socket,
+    @inject(LoggingBindings.WINSTON_LOGGER)
+    private logger: WinstonLogger,
   ) {}
 
   /**
@@ -17,7 +20,7 @@ export class WebSocketController {
    */
   @ws.connect()
   connect() {
-    console.log("Client connected: %s", this.socket.id)
+    this.logger.info("Client connected: %s", this.socket.id)
   }
 
   @ws.subscribe("pipelineStatus")
@@ -25,7 +28,7 @@ export class WebSocketController {
     setTimeout(() => {
       this.io.emit("pipelineStatus", { status: "failed" })
       setTimeout(() => {
-        console.log("Send success")
+        this.logger.info("Send success")
         this.io.emit("pipelineStatus", { status: "success" })
       }, 3000)
     }, 3000)
@@ -33,7 +36,7 @@ export class WebSocketController {
 
   @ws.subscribe("join-pipeline")
   joinPipeline({ jobId }: { jobId: string }) {
-    console.log("Join pipeline server", jobId)
+    this.logger.info("Join pipeline server", jobId)
     this.socket.join(`job-${jobId}`)
   }
 
@@ -43,7 +46,7 @@ export class WebSocketController {
    */
   @ws.subscribe(/.+/)
   logMessage(...args: unknown[]) {
-    console.log("Message", ...args)
+    this.logger.info("Message", ...args)
   }
 
   /**
@@ -52,6 +55,6 @@ export class WebSocketController {
    */
   @ws.disconnect()
   disconnect() {
-    console.log("Client disconnected: %s", this.socket.id)
+    this.logger.info("Client disconnected: %s", this.socket.id)
   }
 }

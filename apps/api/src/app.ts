@@ -4,6 +4,7 @@ import express from "express"
 import * as path from "path"
 import { WebSocketController, WebSocketServer } from "./applications/websocket"
 import { ApiApplication } from "./rest.application"
+import { LoggingBindings } from "@loopback/logging"
 
 // tslint:disable:no-any
 
@@ -41,13 +42,13 @@ export class App extends Application {
     } as any)
     this.bind("servers.websocket.server1").to(wsServer)
     wsServer.use((socket, next) => {
-      console.log("Global middleware - socket:", socket.id)
+      this.lbApp.logger.info("Global middleware - socket:", socket.id)
       next()
     })
     // Add a route
     const ns = wsServer.route(WebSocketController, "test")
     ns.use((socket, next) => {
-      console.log(
+      this.lbApp.logger.info(
         "Middleware for namespace %s - socket: %s",
         socket.nsp.name,
         socket.id,
@@ -57,8 +58,9 @@ export class App extends Application {
     this.wsServer = wsServer
   }
 
-  boot() {
-    return this.lbApp.boot()
+  async boot() {
+    await this.lbApp.boot()
+    this.wsServer.bind(LoggingBindings.WINSTON_LOGGER).to(this.lbApp.logger)
   }
 
   start() {

@@ -30,9 +30,11 @@ import { GitlabDatasource } from "./domains/pipelines/datasources/gitlab.datasou
 import { PipelinesService } from "./domains/pipelines/services/pipelines.service"
 import { JobService } from "./domains/pipelines/services/job.service"
 import { Namespace, Server } from "@loopback/socketio"
+import { format as utilFormat } from "util"
 import { RunnerService } from "./domains/pipelines/services/runner.service"
 
 export { ApplicationConfig }
+const SPLAT = Symbol.for("splat")
 
 export class ApiApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -58,12 +60,20 @@ export class ApiApplication extends BootMixin(
     this.configure(LoggingBindings.WINSTON_LOGGER).to({
       level: "info",
       colorize: true,
-      format: format.combine(format.json()),
-      transports: [
-        new WinstonTransports.Console({
-          format: format.combine(format.colorize(), format.simple()),
-        }),
-      ],
+      format: format.combine(
+        format.colorize(),
+        {
+          transform(info) {
+            const { [SPLAT]: args = [], message } = info
+
+            info.message = utilFormat(message, ...args)
+
+            return info
+          },
+        },
+        format.simple(),
+      ),
+      transports: [new WinstonTransports.Console()],
     })
     this.configure(LoggingBindings.FLUENT_SENDER).to({
       host: process.env.FLUENTD_SERVICE_HOST ?? "localhost",
