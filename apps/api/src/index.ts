@@ -1,6 +1,5 @@
 import { ApplicationConfig } from "./rest.application"
 import { App } from "./app"
-import io from "socket.io-client"
 
 export * from "./rest.application"
 export * from "./applications/websocket"
@@ -10,13 +9,9 @@ export async function main(options: ApplicationConfig = {}) {
   await app.boot()
   await app.start()
 
-  const socketClient = io(`${app.httpServer.url}/test`)
-
-  socketClient.on("connect", () => console.log("Connected from main"))
-
   await app.lbApp.bindSocketConnection(app.wsServer.nsp)
 
-  console.log("listening on %s", app.httpServer.url)
+  app.lbApp.logger.info(`listening on ${app.httpServer.url}`)
 
   return app
 }

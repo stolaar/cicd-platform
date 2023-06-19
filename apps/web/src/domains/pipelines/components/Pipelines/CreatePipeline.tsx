@@ -29,6 +29,10 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
     queryKey: DataService.getRepositories.queryKey(),
     queryFn: DataService.getRepositories(),
     enabled: open,
+    retry: false,
+    meta: {
+      type: "getRepositories",
+    },
   })
 
   const createPipelineMutation = useMutation({

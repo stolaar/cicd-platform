@@ -29,19 +29,26 @@ export class GitlabDatasource implements IDatasource {
   }
 
   async getProjects(username: string, accessToken: string) {
-    const { data } = await axios.get<IGitlabProject[]>(
-      `${gitlabBaseUrl}/api/v4/users/${username}/projects`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+    try {
+      const { data } = await axios.get<IGitlabProject[]>(
+        `${gitlabBaseUrl}/api/v4/users/${username}/projects`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      },
-    )
-    return data.map((project) => ({
-      label: project.name,
-      value: `${project.id}`,
-      provider: "gitlab",
-    }))
+      )
+      return data.map((project) => ({
+        label: project.name,
+        value: `${project.id}`,
+        provider: "gitlab",
+      }))
+    } catch (err) {
+      throw new GitlabError(
+        err.response?.data?.error_description,
+        err.response.status,
+      )
+    }
   }
 
   async getUser(accessToken: string) {

@@ -1,5 +1,9 @@
 import { FC } from "react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query"
 import { IRootProvider } from "./types"
 import { createTheme, ThemeProvider } from "@mui/material"
 
@@ -10,6 +14,15 @@ const queryClient = new QueryClient({
       staleTime: 0,
     },
   },
+  queryCache: new QueryCache({
+    onError: async (error, query) => {
+      try {
+        if (query?.meta?.type === "getRepositories") return
+      } catch (err) {
+        throw error
+      }
+    },
+  }),
 })
 
 const theme = createTheme({

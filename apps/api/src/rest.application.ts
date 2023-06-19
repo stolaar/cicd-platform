@@ -11,7 +11,13 @@ import path from "path"
 import { MySequence } from "./applications/api/sequence"
 import { USERS_SERVICE } from "./domains/users/keys"
 import { UserService } from "./domains/users/services/user.service"
-import { LoggingBindings, LoggingComponent } from "@loopback/logging"
+import {
+  LoggingBindings,
+  LoggingComponent,
+  WinstonLogger,
+  format,
+  WinstonTransports,
+} from "@loopback/logging"
 import {
   DATASOURCE_SERVICE,
   JOB_SERVICE,
@@ -31,6 +37,8 @@ export { ApplicationConfig }
 export class ApiApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
+  public logger: WinstonLogger
+
   constructor(options: ApplicationConfig = {}) {
     super(options)
     this.setupBindings()
@@ -50,6 +58,12 @@ export class ApiApplication extends BootMixin(
     this.configure(LoggingBindings.WINSTON_LOGGER).to({
       level: "info",
       colorize: true,
+      format: format.combine(format.json()),
+      transports: [
+        new WinstonTransports.Console({
+          format: format.combine(format.colorize(), format.simple()),
+        }),
+      ],
     })
     this.configure(LoggingBindings.FLUENT_SENDER).to({
       host: process.env.FLUENTD_SERVICE_HOST ?? "localhost",
@@ -60,6 +74,10 @@ export class ApiApplication extends BootMixin(
 
     this.component(RestExplorerComponent)
     this.component(LoggingComponent)
+
+    this.get<WinstonLogger>(LoggingBindings.WINSTON_LOGGER).then(
+      (logger) => (this.logger = logger),
+    )
 
     this.projectRoot = __dirname
     // Customize @loopback/boot Booter Conventions here

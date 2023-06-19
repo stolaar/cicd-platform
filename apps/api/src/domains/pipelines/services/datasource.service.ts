@@ -26,35 +26,31 @@ export class DatasourceService {
   }
 
   async connectDatasource({ provider, code }: IConnectDatasource) {
-    try {
-      const existing = await this.datasourceRepository.findOne({
-        where: { provider },
-      })
-      let name = ""
+    const existing = await this.datasourceRepository.findOne({
+      where: { provider },
+    })
+    let name = ""
 
-      const { accessToken, refreshToken } =
-        await this.gitlabDatasource.getAccessToken(code)
+    const { accessToken, refreshToken } =
+      await this.gitlabDatasource.getAccessToken(code)
 
-      if (provider === DatasourceProviderEnum.GITLAB) {
-        const gitlabUser = await this.gitlabDatasource.getUser(accessToken)
-        this.logger.info("Gitlab user:", gitlabUser)
-        name = gitlabUser.username ?? ""
-      }
-      if (existing) {
-        existing.refreshToken = refreshToken
-        existing.accessToken = accessToken
-        await this.datasourceRepository.save(existing)
-        return
-      }
-      await this.datasourceRepository.create({
-        name,
-        provider,
-        accessToken,
-        refreshToken,
-      })
-    } catch (err) {
-      throw err
+    if (provider === DatasourceProviderEnum.GITLAB) {
+      const gitlabUser = await this.gitlabDatasource.getUser(accessToken)
+      this.logger.info("Gitlab user:", gitlabUser)
+      name = gitlabUser.username ?? ""
     }
+    if (existing) {
+      existing.refreshToken = refreshToken
+      existing.accessToken = accessToken
+      await this.datasourceRepository.save(existing)
+      return
+    }
+    await this.datasourceRepository.create({
+      name,
+      provider,
+      accessToken,
+      refreshToken,
+    })
   }
 
   async getRepositories() {
