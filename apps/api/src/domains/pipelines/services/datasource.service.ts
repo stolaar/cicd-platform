@@ -55,15 +55,16 @@ export class DatasourceService {
 
   async getRepositories() {
     const datasource = await this.datasourceRepository.findOne({
-      fields: ["accessToken", "name"],
+      fields: ["id", "accessToken", "name", "refreshToken"],
       where: { provider: "gitlab" as DatasourceProviderEnum },
     })
 
     if (!datasource) return []
-
-    return this.gitlabDatasource.getProjects(
-      datasource.name,
+    this.gitlabDatasource.setDatasourceId(datasource.id as number)
+    await this.gitlabDatasource.setTokens(
       datasource.accessToken,
+      datasource.refreshToken,
     )
+    return this.gitlabDatasource.getProjects(datasource.name)
   }
 }
