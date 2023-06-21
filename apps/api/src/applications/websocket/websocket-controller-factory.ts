@@ -7,15 +7,12 @@ import {
 } from "@loopback/context"
 import { Socket } from "socket.io"
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
-export class WebSocketControllerFactory {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  private controller: { [method: string]: Function }
+export class WebSocketControllerFactory<T> {
+  private controller: { [method: string]: T }
 
   constructor(
     private ctx: Context,
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    private controllerClass: Constructor<{ [method: string]: Function }>,
+    private controllerClass: Constructor<{ [method: string]: T }>,
   ) {
     this.ctx
       .bind("ws.controller")
@@ -26,8 +23,7 @@ export class WebSocketControllerFactory {
 
   async create(socket: Socket) {
     // Instantiate the controller instance
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    this.controller = await this.ctx.get<{ [method: string]: Function }>(
+    this.controller = await this.ctx.get<{ [method: string]: T }>(
       "ws.controller",
     )
     await this.setup(socket)
@@ -56,7 +52,7 @@ export class WebSocketControllerFactory {
         this.controllerClass.prototype,
       ) || {}
     for (const m in subscribeMethods) {
-      for (const t of subscribeMethods[m]) {
+      for (const t of subscribeMethods[m as string]) {
         const regexps: RegExp[] = []
         if (typeof t === "string") {
           socket.on(t, async (...args: unknown[]) => {

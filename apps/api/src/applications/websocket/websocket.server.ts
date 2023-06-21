@@ -2,14 +2,15 @@ import { Constructor, Context } from "@loopback/context"
 import { HttpServer } from "@loopback/http-server"
 import { Server, ServerOptions, Socket } from "socket.io"
 import { getWebSocketMetadata } from "./decorators/websocket.decorator"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { WebSocketControllerFactory } from "./websocket-controller-factory"
 import { Server as SocketIOServer } from "socket.io"
 import { Namespace } from "@loopback/socketio"
+import { ExtendedError } from "socket.io/dist/namespace"
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type SockIOMiddleware = (socket: Socket, fn: (err?: any) => void) => void
+export type SockIOMiddleware = (
+  socket: Socket,
+  fn: (err?: ExtendedError) => void,
+) => void
 
 /**
  * A websocket server
@@ -46,7 +47,7 @@ export class WebSocketServer extends Context {
     }
 
     this.nsp = namespace ? this.io.of(namespace) : this.io
-    /* eslint-disable @typescript-eslint/no-misused-promises */
+
     this.nsp.on("connection", async (socket) => {
       // Create a request context
       const reqCtx = new Context(this)
@@ -54,9 +55,10 @@ export class WebSocketServer extends Context {
       reqCtx.bind("ws.socket").to(socket)
       reqCtx.bind("io.socket").to(this.nsp)
       // Instantiate the controller instance
-      await new WebSocketControllerFactory(reqCtx, ControllerClass).create(
-        socket,
-      )
+      await new WebSocketControllerFactory<typeof ControllerClass>(
+        reqCtx,
+        ControllerClass,
+      ).create(socket)
     })
     return this.nsp
   }

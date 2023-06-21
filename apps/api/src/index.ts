@@ -1,11 +1,11 @@
-import { ApplicationConfig } from "./rest.application"
-import { App } from "./app"
+import { ApplicationConfig } from "@loopback/core"
+import { Application } from "./application"
 
 export * from "./rest.application"
 export * from "./applications/websocket"
 
 export async function main(options: ApplicationConfig = {}) {
-  const app = new App(options)
+  const app = new Application(options)
   await app.boot()
   await app.start()
 

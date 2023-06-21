@@ -3,9 +3,7 @@ import {
   post,
   del,
   api,
-  Request,
   response,
-  RestBindings,
   getJsonSchemaRef,
   requestBody,
   get,
@@ -18,7 +16,6 @@ import { PIPELINES_SERVICE } from "../keys"
 @api({ basePath: "/pipelines" })
 export class PipelinesController {
   constructor(
-    @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(PIPELINES_SERVICE)
     public pipelinesService: PipelinesService,
   ) {}

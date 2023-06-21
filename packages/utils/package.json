@@ -2,8 +2,11 @@
   "name": "@stolaar/utils",
   "private": true,
   "version": "0.0.1",
-  "main": "./index.ts",
+  "main": "./src/index.ts",
   "dependencies": {
     "@stolaar/eslint": "*"
+  },
+  "devDependencies": {
+    "typescript": "4.9.4"
   }
 }

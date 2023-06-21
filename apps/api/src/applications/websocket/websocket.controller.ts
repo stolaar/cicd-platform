@@ -42,7 +42,6 @@ export class WebSocketController {
 
   /**
    * Register a handler for all events
-   * @param msg
    */
   @ws.subscribe(/.+/)
   logMessage(...args: unknown[]) {

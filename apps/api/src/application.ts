@@ -1,14 +1,16 @@
-import { Application, ApplicationConfig } from "@loopback/core"
+import {
+  Application as LoopbackApplication,
+  ApplicationConfig,
+} from "@loopback/core"
 import { HttpServer } from "@loopback/http-server"
 import express from "express"
 import * as path from "path"
 import { WebSocketController, WebSocketServer } from "./applications/websocket"
 import { ApiApplication } from "./rest.application"
 import { LoggingBindings } from "@loopback/logging"
+import { ServerOptions } from "socket.io"
 
-// tslint:disable:no-any
-
-export class App extends Application {
+export class Application extends LoopbackApplication {
   readonly httpServer: HttpServer
   readonly wsServer: WebSocketServer
   public readonly lbApp: ApiApplication
@@ -16,13 +18,9 @@ export class App extends Application {
   constructor(options: ApplicationConfig = {}) {
     super(options)
 
-    /**
-     * Create an Express app to serve the home page
-     */
     const expressApp = express()
     const root = path.resolve(__dirname, "../../public")
 
-    // Create an http server backed by the Express app
     this.httpServer = new HttpServer(expressApp, {
       ...options.websocket,
       port: 8080,
@@ -39,13 +37,13 @@ export class App extends Application {
         origin: "*",
         methods: ["GET", "POST"],
       },
-    } as any)
+    } as ServerOptions)
     this.bind("servers.websocket.server1").to(wsServer)
     wsServer.use((socket, next) => {
       this.lbApp.logger.info("Global middleware - socket:", socket.id)
       next()
     })
-    // Add a route
+
     const ns = wsServer.route(WebSocketController, "test")
     ns.use((socket, next) => {
       this.lbApp.logger.info(

@@ -33,7 +33,6 @@ import { Namespace, Server } from "@loopback/socketio"
 import { format as utilFormat } from "util"
 import { RunnerService } from "./domains/pipelines/services/runner.service"
 
-export { ApplicationConfig }
 const SPLAT = Symbol.for("splat")
 
 export class ApiApplication extends BootMixin(
@@ -90,10 +89,8 @@ export class ApiApplication extends BootMixin(
     )
 
     this.projectRoot = __dirname
-    // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {
       controllers: {
-        // Customize ControllerBooter Conventions here
         dirs: ["domains/**/**/controllers"],
         extensions: [".controller.js"],
         nested: true,

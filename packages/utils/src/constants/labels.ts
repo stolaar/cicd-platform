@@ -1,3 +1,3 @@
 export const LABELS = {
-  hello: 'Hello',
+  hello: "Hello",
 } as const

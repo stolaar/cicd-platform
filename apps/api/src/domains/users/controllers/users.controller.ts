@@ -2,9 +2,7 @@ import { inject } from "@loopback/core"
 import {
   post,
   api,
-  Request,
   response,
-  RestBindings,
   getJsonSchemaRef,
   requestBody,
   get,
@@ -16,7 +14,6 @@ import { USERS_SERVICE } from "../keys"
 @api({ basePath: "/users" })
 export class UsersController {
   constructor(
-    @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(USERS_SERVICE)
     public userService: UserService,
   ) {}
