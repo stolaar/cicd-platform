@@ -119,7 +119,10 @@ export class PipelinesService {
         const [lastCommit] =
           await this.codeHostingIntegrationService.getBranches(
             +pipeline.repositoryId,
-            pipeline.branch ?? "",
+            {
+              regex: pipeline.branch,
+              username: codeHostingProvider.name,
+            },
           )
         if (lastCommit) {
           const job = await this.jobService.createJob({

@@ -1,5 +1,6 @@
 import axios from "axios"
 import {
+  IBranchesConfig,
   ICodeHostingProvider,
   ICodeHostingProviderConfig,
   IGitlabProject,
@@ -194,7 +195,7 @@ export class GitlabService implements ICodeHostingProvider {
     })
   }
 
-  async getBranches(repositoryId: number, regex: string) {
+  async getBranches(repositoryId: number, { regex }: IBranchesConfig) {
     return this.retry(async () => {
       try {
         const { data } = await axios.get<any[]>(

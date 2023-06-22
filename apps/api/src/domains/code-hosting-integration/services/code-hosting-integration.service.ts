@@ -2,6 +2,7 @@ import { Binding, Getter, inject } from "@loopback/core"
 import {
   IAccessTokens,
   IBranch,
+  IBranchesConfig,
   ICodeHostingProvider,
   ICodeHostingProviderConfig,
   ICodeHostingProviderUser,
@@ -56,7 +57,10 @@ export class CodeHostingIntegrationService implements ICodeHostingProvider {
     return this.service.cloneRepositories(repositoryId, path)
   }
 
-  getBranches(repositoryId: number, regex: string): Promise<IBranch[]> {
-    return this.service.getBranches(repositoryId, regex)
+  getBranches(
+    repositoryId: number,
+    config: IBranchesConfig,
+  ): Promise<IBranch[]> {
+    return this.service.getBranches(repositoryId, config)
   }
 }

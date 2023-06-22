@@ -30,6 +30,9 @@ export interface IConnectCodeHostingProvider {
   provider: CodeHostingProviderEnum
 }
 
+export interface IGithubUser extends ICodeHostingProviderUser {
+  login: string
+}
 export interface IGitlabUser extends ICodeHostingProviderUser {}
 
 export interface ICodeHostingProviderConfig {
@@ -48,6 +51,11 @@ export interface IBranch {
   branch: string
 }
 
+export interface IBranchesConfig {
+  username?: string
+  regex?: string
+}
+
 export interface ICodeHostingProvider {
   configure(config: ICodeHostingProviderConfig): void
   getAccessToken(code: string): Promise<IAccessTokens>
@@ -55,5 +63,5 @@ export interface ICodeHostingProvider {
   getUser(): Promise<ICodeHostingProviderUser>
   registerWebhook(projectId: number): Promise<void>
   cloneRepositories(repositoryId: number, path: string): Promise<void>
-  getBranches(repositoryId: number, regex: string): Promise<IBranch[]>
+  getBranches(repositoryId: number, config: IBranchesConfig): Promise<IBranch[]>
 }

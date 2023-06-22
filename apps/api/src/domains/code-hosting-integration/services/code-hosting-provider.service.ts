@@ -5,7 +5,6 @@ import { CODE_HOSTING_INTEGRATION_SERVICE } from "../keys"
 import { CodeHostingIntegrationService } from "./code-hosting-integration.service"
 import { CodeHostingProviderRepository } from "../repositories"
 import { IConnectCodeHostingProvider } from "../types"
-import { CodeHostingProviderEnum } from "../models"
 
 export class CodeHostingProviderService {
   constructor(
@@ -54,21 +53,31 @@ export class CodeHostingProviderService {
   }
 
   async getRepositories() {
-    const codeHostingProvider =
-      await this.codeHostingProviderRepository.findOne({
-        fields: ["id", "accessToken", "name", "refreshToken", "provider"],
-        where: { provider: "gitlab" as CodeHostingProviderEnum },
-      })
-
-    if (!codeHostingProvider) return []
-    await this.codeHostingIntegrationService.configure({
-      name: codeHostingProvider.provider,
-      accessToken: codeHostingProvider.accessToken,
-      refreshToken: codeHostingProvider.refreshToken,
-      codeHostingProviderId: codeHostingProvider.id as number,
+    const codeHostingProviders = await this.codeHostingProviderRepository.find({
+      fields: ["id", "accessToken", "name", "refreshToken", "provider"],
     })
-    return this.codeHostingIntegrationService.getProjects(
-      codeHostingProvider.name,
-    )
+
+    if (!codeHostingProviders?.length) return []
+
+    const projects = []
+
+    for await (const codeHostingProvider of codeHostingProviders) {
+      await this.codeHostingIntegrationService.configure({
+        name: codeHostingProvider.provider,
+        accessToken: codeHostingProvider.accessToken,
+        refreshToken: codeHostingProvider.refreshToken,
+        codeHostingProviderId: codeHostingProvider.id as number,
+      })
+      const codeHostingProjects =
+        await this.codeHostingIntegrationService.getProjects(
+          codeHostingProvider.name,
+        )
+
+      if (codeHostingProjects.length) {
+        projects.push(codeHostingProjects)
+      }
+    }
+
+    return projects.flat()
   }
 }
