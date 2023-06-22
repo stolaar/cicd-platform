@@ -80,12 +80,14 @@ export const GitAccountsTab: FC = () => {
         <Box>
           <Text variant={"h3"}>{LABELS.connectedAccounts}</Text>
           <StyledDivider />
-          {data.map(({ provider, name }) => (
-            <StyledCard key={name}>
-              <StyledCardHeader title={provider} />
-              <StyledCardContent>{name}</StyledCardContent>
-            </StyledCard>
-          ))}
+          <Box sx={{ display: "flex", gap: "15px" }}>
+            {data.map(({ provider, name }) => (
+              <StyledCard key={name}>
+                <StyledCardHeader title={provider} />
+                <StyledCardContent>@{name}</StyledCardContent>
+              </StyledCard>
+            ))}
+          </Box>
         </Box>
       </StyledContainer>
     </TabPanel>
