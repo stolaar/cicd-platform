@@ -101,29 +101,32 @@ export class PipelinesService {
         throw new Error("Code hosting provider not found")
       }
 
-      if (
-        codeHostingProvider.provider === CodeHostingProviderEnum.GITLAB &&
-        pipeline.repositoryId
-      ) {
+      if (pipeline.repositoryId) {
         await this.codeHostingIntegrationService.configure({
           name: codeHostingProvider.provider,
           accessToken: codeHostingProvider.accessToken,
           refreshToken: codeHostingProvider.refreshToken,
           codeHostingProviderId: codeHostingProvider.id,
         })
-        await this.codeHostingIntegrationService.cloneRepositories(
-          +pipeline.repositoryId,
-          path.join(__dirname, "..", "..", "..", "tmp", pipeline.repositoryId),
-        )
+        await this.codeHostingIntegrationService.cloneRepositories({
+          repositoryId: +pipeline.repositoryId,
+          repositoryName: pipeline.repositoryName,
+          path: path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "tmp",
+            pipeline.repositoryId,
+          ),
+        })
 
         const [lastCommit] =
-          await this.codeHostingIntegrationService.getBranches(
-            +pipeline.repositoryId,
-            {
-              regex: pipeline.branch,
-              username: codeHostingProvider.name,
-            },
-          )
+          await this.codeHostingIntegrationService.getBranches({
+            regex: pipeline.branch,
+            repositoryName: pipeline.repositoryName,
+            repositoryId: +pipeline.repositoryId,
+          })
         if (lastCommit) {
           const job = await this.jobService.createJob({
             commitMessage: lastCommit.commitMessage,
@@ -136,6 +139,8 @@ export class PipelinesService {
           })
           this.socket.emit("jobCreated", { jobId: `${job.id}`, pipelineId })
           this.runnerService.runJob(pipeline, job)
+        } else {
+          this.socket.emit("pipelineStatus", { status: "failed", pipelineId })
         }
       }
     }

@@ -54,15 +54,23 @@ export const CreateOrEditPipeline: FC<ICreateOrEditPipeline> = ({
   })
 
   const onCreateOrEditMutation = async (values: TPipeline) => {
+    const provider = data.find((item) => item.value === values.repositoryId)
+
     if (pipeline?.id) {
-      await editPipelineMutation.mutateAsync({ ...values, id: pipeline.id })
+      await editPipelineMutation.mutateAsync({
+        ...values,
+        provider: provider?.provider,
+        repositoryName: provider?.fullName,
+        id: pipeline.id,
+      })
       return
     }
 
-    const provider = data.find(
-      (item) => item.value === values.repositoryId,
-    )?.provider
-    await createPipelineMutation.mutateAsync({ ...values, provider })
+    await createPipelineMutation.mutateAsync({
+      ...values,
+      provider: provider?.provider,
+      repositoryName: provider?.fullName,
+    })
   }
 
   const onCloseHandler = () => {

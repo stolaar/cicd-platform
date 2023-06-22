@@ -17,6 +17,7 @@ export const getRepositories = createApiHandler(
           label: string
           value: string
           provider: string
+          fullName: string
         }[]
       >("/api/code-hosting-provider/repositories", {
         signal,

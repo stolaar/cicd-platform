@@ -10,13 +10,21 @@ export interface IGitlabTokenResponse {
   refresh_token: string
 }
 
+export interface IGithubProject {
+  name: string
+  id: number
+  full_name: string
+}
+
 export interface IGitlabProject {
   name: string
   id: number
+  path_with_namespace: string
 }
 
 export interface IProject {
   label: string
+  fullName: string
   value: string
   provider: string
 }
@@ -52,8 +60,15 @@ export interface IBranch {
 }
 
 export interface IBranchesConfig {
-  username?: string
   regex?: string
+  repositoryName?: string
+  repositoryId?: number
+}
+
+export interface ICloneRepositoriesConfig {
+  path: string
+  repositoryId?: number
+  repositoryName?: string
 }
 
 export interface ICodeHostingProvider {
@@ -62,6 +77,6 @@ export interface ICodeHostingProvider {
   getProjects(username: string): Promise<IProject[]>
   getUser(): Promise<ICodeHostingProviderUser>
   registerWebhook(projectId: number): Promise<void>
-  cloneRepositories(repositoryId: number, path: string): Promise<void>
-  getBranches(repositoryId: number, config: IBranchesConfig): Promise<IBranch[]>
+  cloneRepositories(config: ICloneRepositoriesConfig): Promise<void>
+  getBranches(config: IBranchesConfig): Promise<IBranch[]>
 }

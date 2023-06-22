@@ -31,6 +31,11 @@ export class Pipeline extends Entity {
   @property({
     type: "string",
   })
+  repositoryName?: string
+
+  @property({
+    type: "string",
+  })
   branch?: string
 
   @belongsTo(() => CodeHostingProvider)

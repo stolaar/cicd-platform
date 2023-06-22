@@ -3,6 +3,7 @@ import {
   IAccessTokens,
   IBranch,
   IBranchesConfig,
+  ICloneRepositoriesConfig,
   ICodeHostingProvider,
   ICodeHostingProviderConfig,
   ICodeHostingProviderUser,
@@ -53,14 +54,11 @@ export class CodeHostingIntegrationService implements ICodeHostingProvider {
     return this.service.registerWebhook(projectId)
   }
 
-  cloneRepositories(repositoryId: number, path: string): Promise<void> {
-    return this.service.cloneRepositories(repositoryId, path)
+  cloneRepositories(config: ICloneRepositoriesConfig): Promise<void> {
+    return this.service.cloneRepositories(config)
   }
 
-  getBranches(
-    repositoryId: number,
-    config: IBranchesConfig,
-  ): Promise<IBranch[]> {
-    return this.service.getBranches(repositoryId, config)
+  getBranches(config: IBranchesConfig): Promise<IBranch[]> {
+    return this.service.getBranches(config)
   }
 }

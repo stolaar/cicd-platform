@@ -1,10 +1,11 @@
 import axios from "axios"
 import {
   IBranchesConfig,
+  ICloneRepositoriesConfig,
   ICodeHostingProvider,
   ICodeHostingProviderConfig,
+  IGithubProject,
   IGithubUser,
-  IGitlabProject,
   IGitlabTokenResponse,
   IProject,
 } from "../../types"
@@ -129,7 +130,7 @@ export class GithubService implements ICodeHostingProvider {
   async getProjects(username: string): Promise<IProject[]> {
     return this.retry(async () => {
       try {
-        const { data } = await this.requestClient.get<IGitlabProject[]>(
+        const { data } = await this.requestClient.get<IGithubProject[]>(
           `${githubApiBaseUrl}/users/${username}/repos`,
           {
             headers: {
@@ -139,6 +140,7 @@ export class GithubService implements ICodeHostingProvider {
         )
         return data.map((project) => ({
           label: project.name,
+          fullName: project.full_name,
           value: `${project.id}`,
           provider: "github",
         }))
@@ -195,15 +197,14 @@ export class GithubService implements ICodeHostingProvider {
     })
   }
 
-  async cloneRepositories(repositoryId: number, path: string) {
+  async cloneRepositories({ path, repositoryName }: ICloneRepositoriesConfig) {
     return this.retry(async () => {
       try {
-        // TODO: Get username from args
         const {
           data: { html_url },
         } = await this.requestClient.get<{
           html_url: string
-        }>(`${githubApiBaseUrl}/repos/stolaar/${repositoryId}`, {
+        }>(`${githubApiBaseUrl}/repos/${repositoryName}`, {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
           },
@@ -215,33 +216,49 @@ export class GithubService implements ICodeHostingProvider {
         )
         spawnSync("git", ["clone", cloneUrl, path])
       } catch (err) {
-        throw new GitlabError(
-          err.response?.data?.error_description,
-          err.response.status,
-        )
+        throw new GitlabError(err.response?.message, err.response.status)
       }
     })
   }
 
-  async getBranches(repositoryId: number, { username }: IBranchesConfig) {
+  async getBranches({ repositoryName, regex }: IBranchesConfig) {
     return this.retry(async () => {
       try {
         const { data } = await this.requestClient.get<any[]>(
-          `${githubApiBaseUrl}/repos/${username}/${repositoryId}/branches`,
+          `${githubApiBaseUrl}/repos/${repositoryName}/branches`,
           {
             headers: {
               Authorization: `Bearer ${this.accessToken}`,
             },
           },
         )
-        return data.map(({ name, commit }) => ({
-          id: commit.id,
-          commitMessage: commit.message?.split("\n").shift(),
-          author: commit.author_name,
-          commitSha: commit.short_id,
-          commitLink: commit.web_url,
-          branch: name,
-        }))
+        return Promise.all(
+          data
+            .filter(({ name }) =>
+              // eslint-disable-next-line security/detect-non-literal-regexp
+              regex ? new RegExp(`${regex}` as string).test(name) : true,
+            )
+            .map(async ({ name, commit: branchCommit }) => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              const { data: commit } = await this.requestClient.get<any>(
+                branchCommit.url,
+                {
+                  headers: {
+                    Authorization: `Bearer ${this.accessToken}`,
+                  },
+                },
+              )
+              return {
+                id: commit.id,
+                commitMessage: commit.commit?.message?.split("\n").shift(),
+                author: commit.commit?.author?.name,
+                commitSha: commit.sha?.substring(0, 5),
+                commitLink: commit.html_url,
+                branch: name,
+              }
+            }),
+        )
       } catch (err) {
         throw new GitlabError(
           err.response?.data?.error_description,

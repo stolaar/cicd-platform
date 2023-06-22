@@ -56,7 +56,12 @@ export const Pipelines: FC = () => {
       {
         field: "name",
         headerName: "Pipeline",
-        renderCell: (row: BaseGridRenderCellParams) => <Text>{row.value}</Text>,
+        renderCell: (row: BaseGridRenderCellParams) => (
+          <Box>
+            <Text>{row.value}</Text>
+            <Text variant={"body2m"}>{row?.row?.repositoryName}</Text>
+          </Box>
+        ),
         sortable: false,
         width: 281,
       },

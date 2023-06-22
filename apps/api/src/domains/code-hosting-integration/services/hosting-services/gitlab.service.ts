@@ -1,6 +1,7 @@
 import axios from "axios"
 import {
   IBranchesConfig,
+  ICloneRepositoriesConfig,
   ICodeHostingProvider,
   ICodeHostingProviderConfig,
   IGitlabProject,
@@ -116,6 +117,7 @@ export class GitlabService implements ICodeHostingProvider {
         )
         return data.map((project) => ({
           label: project.name,
+          fullName: project.path_with_namespace,
           value: `${project.id}`,
           provider: "gitlab",
         }))
@@ -168,7 +170,7 @@ export class GitlabService implements ICodeHostingProvider {
     })
   }
 
-  async cloneRepositories(repositoryId: number, path: string) {
+  async cloneRepositories({ path, repositoryId }: ICloneRepositoriesConfig) {
     return this.retry(async () => {
       try {
         const {
@@ -195,7 +197,7 @@ export class GitlabService implements ICodeHostingProvider {
     })
   }
 
-  async getBranches(repositoryId: number, { regex }: IBranchesConfig) {
+  async getBranches({ regex, repositoryId }: IBranchesConfig) {
     return this.retry(async () => {
       try {
         const { data } = await axios.get<any[]>(
