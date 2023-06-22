@@ -4,13 +4,15 @@ import { CreateOrEditPipeline } from "@domain/pipelines/components/Pipelines/Cre
 import { useBoolean } from "@hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { DataService } from "@services"
-import { BaseGridRenderCellParams, DataGrid } from "@components/DataGrid"
+import { BaseGridRenderCellParams } from "@components/DataGrid"
 import { Box, Grid, IconButton } from "@mui/material"
 import Link from "next/link"
 import { PlayCircle, Delete, Edit } from "@mui/icons-material"
 import { PipelineStatus } from "@domain/pipelines/components/Pipelines/components/PipelineStatus"
 import { PipelineRow } from "@domain/pipelines/components/Pipelines/components/PipelineRow"
 import { TPipeline } from "@domain/pipelines/components/Pipelines/validation/validation-schema"
+import { GridColDef } from "@mui/x-data-grid"
+import { StyledDataGrid } from "@domain/pipelines/components/Pipelines/Pipelines.styled"
 
 export const Pipelines: FC = () => {
   const [
@@ -51,15 +53,15 @@ export const Pipelines: FC = () => {
     deletePipelineMutation.mutate(id)
   }
 
-  const pipelineColumns = useMemo(
+  const pipelineColumns: GridColDef[] = useMemo(
     () => [
       {
         field: "name",
         headerName: "Pipeline",
         renderCell: (row: BaseGridRenderCellParams) => (
           <Box>
-            <Text>{row.value}</Text>
-            <Text variant={"body2m"}>{row?.row?.repositoryName}</Text>
+            <Text variant={"subtitle2"}>{row.value}</Text>
+            <Text variant={"body2"}>{row?.row?.repositoryName}</Text>
           </Box>
         ),
         sortable: false,
@@ -147,7 +149,7 @@ export const Pipelines: FC = () => {
         />
       )}
       <Grid item md={12} sx={{ overflowX: "auto" }}>
-        <DataGrid
+        <StyledDataGrid
           slots={{
             row: PipelineRow,
           }}
