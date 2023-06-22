@@ -40,11 +40,12 @@ export const GitAccountsTab: FC = () => {
 
   useEffect(() => {
     if (router.query.code && !datasourceCodeRef.current) {
+      console.log({ provider: router.query.provider })
       connectDatasourceMutation.mutate({
         code: router.query.code as string,
-        provider: "gitlab",
+        provider: router.query.provider ?? "gitlab",
       })
-      router.replace(router.pathname)
+      router.replace("/settings")
       datasourceCodeRef.current = true
     }
   }, [router.query])
@@ -75,7 +76,7 @@ export const GitAccountsTab: FC = () => {
           </ContainedButton>
         </StyledButtonsContainer>
         <Box>
-          <Text variant={"h4"}>{LABELS.connectedAccounts}</Text>
+          <Text variant={"h3"}>{LABELS.connectedAccounts}</Text>
           <StyledDivider />
           {data.map(({ provider, name }) => (
             <StyledCard key={name}>
