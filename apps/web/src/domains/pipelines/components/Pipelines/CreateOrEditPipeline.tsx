@@ -51,12 +51,17 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
     await createPipelineMutation.mutateAsync({ ...values, provider })
   }
 
+  const onCloseHandler = () => {
+    methods.reset()
+    onClose()
+  }
+
   return (
-    <form onSubmit={methods.handleSubmit(onCreateMutation, console.log)}>
+    <form onSubmit={methods.handleSubmit(onCreateMutation)}>
       <Dialog
         title={"Create pipeline"}
         open={open}
-        onClose={onClose}
+        onClose={onCloseHandler}
         actions={<ContainedButton type={"submit"}>Save</ContainedButton>}
       >
         <FormTextField

@@ -189,7 +189,7 @@ export class GitlabDatasource implements IDatasource {
     return this.retry(async () => {
       try {
         const { data } = await axios.get<any[]>(
-          `${gitlabBaseUrl}/api/v4/projects/${projectId}/repository/branches?search=${branch}`,
+          `${gitlabBaseUrl}/api/v4/projects/${projectId}/repository/branches?regex=${branch}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
