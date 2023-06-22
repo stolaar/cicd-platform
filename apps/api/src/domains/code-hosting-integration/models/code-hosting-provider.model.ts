@@ -1,5 +1,5 @@
 import { Entity, hasMany, model, property } from "@loopback/repository"
-import { Pipeline } from "./pipeline.model"
+import { Pipeline } from "../../pipelines/models"
 
 export enum DatasourceProviderEnum {
   GITLAB = "gitlab",
@@ -7,7 +7,7 @@ export enum DatasourceProviderEnum {
 }
 
 @model()
-export class Datasource extends Entity {
+export class CodeHostingProvider extends Entity {
   @property({
     type: "number",
     id: true,
@@ -39,7 +39,7 @@ export class Datasource extends Entity {
   @hasMany(() => Pipeline)
   pipelines: Pipeline[]
 
-  constructor(data?: Partial<Datasource>) {
+  constructor(data?: Partial<CodeHostingProvider>) {
     super(data)
   }
 }

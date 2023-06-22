@@ -1,3 +1,3 @@
 export * from "./users"
-export * from "./datasources"
+export * from "./code-hosting-provider"
 export * from "./pipelines"

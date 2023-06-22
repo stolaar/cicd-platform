@@ -5,8 +5,8 @@ import {
   model,
   property,
 } from "@loopback/repository"
-import { Datasource } from "./datasource.model"
 import { Job } from "./job.model"
+import { CodeHostingProvider } from "../../code-hosting-integration/models"
 
 @model()
 export class Pipeline extends Entity {
@@ -33,8 +33,8 @@ export class Pipeline extends Entity {
   })
   branch?: string
 
-  @belongsTo(() => Datasource)
-  datasourceId: number
+  @belongsTo(() => CodeHostingProvider)
+  codeHostingProviderId: number
 
   @hasMany(() => Job)
   jobs: Job[]

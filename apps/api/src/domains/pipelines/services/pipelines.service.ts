@@ -2,31 +2,31 @@ import { DataObject, repository } from "@loopback/repository"
 import { PipelinesRepository } from "../repositories/pipelines.repository"
 import { Pipeline } from "../models"
 import { inject } from "@loopback/core"
-import { GITLAB_DATASOURCE } from "../datasources/keys"
-import { GitlabDatasource } from "../datasources/gitlab.datasource"
-import { DatasourceRepository } from "../repositories/datasource.repository"
-import { DatasourceProviderEnum } from "../models/datasource.model"
 import { LoggingBindings, WinstonLogger } from "@loopback/logging"
 import path from "path"
 import { JOB_SERVICE, RUNNER_SERVICE } from "../keys"
 import { JobService } from "./job.service"
 import { Socket } from "socket.io-client"
 import { RunnerService } from "./runner.service"
+import { CODE_HOSTING_INTEGRATION_SERVICE } from "../../code-hosting-integration/keys"
+import { CodeHostingIntegrationService } from "../../code-hosting-integration/services"
+import { CodeHostingProviderRepository } from "../../code-hosting-integration/repositories"
+import { DatasourceProviderEnum } from "../../code-hosting-integration/models"
 
 export class PipelinesService {
   constructor(
     @inject(LoggingBindings.WINSTON_LOGGER)
     private logger: WinstonLogger,
-    @inject(GITLAB_DATASOURCE)
-    public gitlabDatasource: GitlabDatasource,
+    @inject(CODE_HOSTING_INTEGRATION_SERVICE)
+    public codeHostingIntegrationService: CodeHostingIntegrationService,
     @inject(JOB_SERVICE)
     public jobService: JobService,
     @inject(RUNNER_SERVICE)
     public runnerService: RunnerService,
     @repository(PipelinesRepository)
     private pipelineRepository: PipelinesRepository,
-    @repository(DatasourceRepository)
-    private datasourceRepository: DatasourceRepository,
+    @repository(CodeHostingProviderRepository)
+    private codeHostingProviderRepository: CodeHostingProviderRepository,
     @inject("socket.connection")
     private socket: Socket,
   ) {}
@@ -34,23 +34,28 @@ export class PipelinesService {
     provider,
     ...pipeline
   }: DataObject<Pipeline> & { provider: string }) {
-    const datasource = await this.datasourceRepository.findOne({
+    const datasource = await this.codeHostingProviderRepository.findOne({
       where: {
         provider: (provider ?? "") as DatasourceProviderEnum,
       },
     })
     const createdPipeline = await this.pipelineRepository.create({
       ...pipeline,
-      ...(!!datasource && { datasourceId: datasource.id }),
+      ...(!!datasource && { codeHostingProviderId: datasource.id }),
     })
 
     if (
       datasource?.provider === DatasourceProviderEnum.GITLAB &&
       createdPipeline.repositoryId
     ) {
-      await this.gitlabDatasource.registerWebhook(
+      await this.codeHostingIntegrationService.configure({
+        name: datasource.provider,
+        accessToken: datasource.accessToken,
+        refreshToken: datasource.refreshToken,
+        datasourceId: datasource.id,
+      })
+      await this.codeHostingIntegrationService.registerWebhook(
         +createdPipeline.repositoryId,
-        datasource.accessToken,
       )
     }
   }
@@ -84,9 +89,9 @@ export class PipelinesService {
     if (!pipeline) {
       throw new Error("Pipeline not found")
     }
-    if (pipeline.datasourceId) {
-      const datasource = await this.datasourceRepository.findById(
-        pipeline.datasourceId,
+    if (pipeline.codeHostingProviderId) {
+      const datasource = await this.codeHostingProviderRepository.findById(
+        pipeline.codeHostingProviderId,
       )
       if (!datasource) {
         throw new Error("Datasource not found")
@@ -96,17 +101,22 @@ export class PipelinesService {
         datasource.provider === DatasourceProviderEnum.GITLAB &&
         pipeline.repositoryId
       ) {
-        await this.gitlabDatasource.cloneRepository(
+        await this.codeHostingIntegrationService.configure({
+          name: datasource.provider,
+          accessToken: datasource.accessToken,
+          refreshToken: datasource.refreshToken,
+          datasourceId: datasource.id,
+        })
+        await this.codeHostingIntegrationService.cloneRepositories(
           +pipeline.repositoryId,
-          datasource.accessToken,
           path.join(__dirname, "..", "..", "..", "tmp", pipeline.repositoryId),
         )
 
-        const [lastCommit] = await this.gitlabDatasource.getBranch(
-          +pipeline.repositoryId,
-          datasource.accessToken,
-          pipeline.branch,
-        )
+        const [lastCommit] =
+          await this.codeHostingIntegrationService.getBranches(
+            +pipeline.repositoryId,
+            pipeline.branch ?? "",
+          )
         if (lastCommit) {
           const job = await this.jobService.createJob({
             commitMessage: lastCommit.commitMessage,

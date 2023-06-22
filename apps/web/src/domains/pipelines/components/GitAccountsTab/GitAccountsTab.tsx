@@ -30,12 +30,14 @@ export const GitAccountsTab: FC = () => {
     mutationFn: DataService.connectDatasource,
     mutationKey: DataService.connectDatasource.queryKey,
     onSuccess: () =>
-      queryClient.invalidateQueries(DataService.getDatasources.queryKey()),
+      queryClient.invalidateQueries(
+        DataService.getCodeHostingProviders.queryKey(),
+      ),
   })
 
   const { data = [] } = useQuery({
-    queryKey: DataService.getDatasources.queryKey(),
-    queryFn: DataService.getDatasources,
+    queryKey: DataService.getCodeHostingProviders.queryKey(),
+    queryFn: DataService.getCodeHostingProviders,
   })
 
   useEffect(() => {

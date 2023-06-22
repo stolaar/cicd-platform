@@ -19,19 +19,25 @@ import {
   WinstonTransports,
 } from "@loopback/logging"
 import {
-  DATASOURCE_SERVICE,
   JOB_SERVICE,
   PIPELINES_SERVICE,
   RUNNER_SERVICE,
 } from "./domains/pipelines/keys"
-import { DatasourceService } from "./domains/pipelines/services/datasource.service"
-import { GITLAB_DATASOURCE } from "./domains/pipelines/datasources/keys"
-import { GitlabDatasource } from "./domains/pipelines/datasources/gitlab.datasource"
 import { PipelinesService } from "./domains/pipelines/services/pipelines.service"
 import { JobService } from "./domains/pipelines/services/job.service"
 import { Namespace, Server } from "@loopback/socketio"
 import { format as utilFormat } from "util"
 import { RunnerService } from "./domains/pipelines/services/runner.service"
+import {
+  CODE_HOSTING_CREDENTIALS_SERVICE,
+  CODE_HOSTING_INTEGRATION_SERVICE,
+  CODE_HOSTING_PROVIDER_SERVICE,
+} from "./domains/code-hosting-integration/keys"
+import {
+  CodeHostingCredentialsService,
+  CodeHostingIntegrationService,
+  CodeHostingProviderService,
+} from "./domains/code-hosting-integration/services"
 
 const SPLAT = Symbol.for("splat")
 
@@ -105,8 +111,13 @@ export class ApiApplication extends BootMixin(
 
   setupBindings(): void {
     this.bind(USERS_SERVICE).toClass(UserService)
-    this.bind(DATASOURCE_SERVICE).toClass(DatasourceService)
-    this.bind(GITLAB_DATASOURCE).toClass(GitlabDatasource)
+    this.bind(CODE_HOSTING_CREDENTIALS_SERVICE).toClass(
+      CodeHostingCredentialsService,
+    )
+    this.bind(CODE_HOSTING_INTEGRATION_SERVICE).toClass(
+      CodeHostingIntegrationService,
+    )
+    this.bind(CODE_HOSTING_PROVIDER_SERVICE).toClass(CodeHostingProviderService)
     this.bind(PIPELINES_SERVICE).toClass(PipelinesService)
     this.bind(JOB_SERVICE).toClass(JobService)
     this.bind(RUNNER_SERVICE).toClass(RunnerService)

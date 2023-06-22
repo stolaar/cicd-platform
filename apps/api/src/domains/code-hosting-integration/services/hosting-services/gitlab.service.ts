@@ -1,39 +1,48 @@
 import axios from "axios"
-import { GitlabError } from "../errors/GitlabError"
 import {
   IDatasource,
+  IDatasourceConfig,
   IGitlabProject,
   IGitlabTokenResponse,
   IGitlabUser,
   IProject,
-} from "./types"
+} from "../../types"
 import { spawnSync } from "child_process"
-import { repository } from "@loopback/repository"
-import { DatasourceRepository } from "../repositories/datasource.repository"
-import { retryRequest } from "../../../utils/retry-request.util"
+import { inject } from "@loopback/core"
+import { CODE_HOSTING_CREDENTIALS_SERVICE } from "../../keys"
+import { CodeHostingCredentialsService } from "../code-hosting-credentials.service"
+import { retryRequest } from "../../../../utils/retry-request.util"
+import { GitlabError } from "../../../pipelines/errors/GitlabError"
 
 const gitlabBaseUrl = "https://gitlab.com"
 
-export class GitlabDatasource implements IDatasource {
-  private datasourceId: number
-  private accessToken: string
-  private refreshToken: string
+export class GitlabService implements IDatasource {
+  private datasourceId?: number
+  private accessToken?: string
+  private refreshToken?: string
 
   constructor(
-    @repository(DatasourceRepository)
-    private datasourceRepository: DatasourceRepository,
+    @inject(CODE_HOSTING_CREDENTIALS_SERVICE)
+    private codeHostingCredentialsService: CodeHostingCredentialsService,
   ) {}
 
-  setDatasourceId(datasourceId: number) {
-    this.datasourceId = datasourceId
+  configure(config: IDatasourceConfig) {
+    this.datasourceId = config.datasourceId
+    this.accessToken = config.accessToken
+    this.refreshToken = config.refreshToken
   }
 
   async setTokens(accessToken: string, refreshToken: string) {
-    if (this.accessToken && this.accessToken !== accessToken) {
-      await this.datasourceRepository.updateById(this.datasourceId, {
+    if (
+      this.accessToken &&
+      this.accessToken !== accessToken &&
+      this.datasourceId
+    ) {
+      await this.codeHostingCredentialsService.updateTokens(
+        this.datasourceId,
         accessToken,
         refreshToken,
-      })
+      )
     }
     this.accessToken = accessToken
     this.refreshToken = refreshToken
@@ -118,13 +127,13 @@ export class GitlabDatasource implements IDatasource {
     })
   }
 
-  async getUser(accessToken: string) {
+  async getUser() {
     return this.retry(async () => {
       const { data } = await axios.get<IGitlabUser>(
         `${gitlabBaseUrl}/api/v4/user`,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${this.accessToken}`,
           },
         },
       )
@@ -133,7 +142,7 @@ export class GitlabDatasource implements IDatasource {
     })
   }
 
-  async registerWebhook(projectId: number, accessToken: string) {
+  async registerWebhook(projectId: number) {
     return this.retry(async () => {
       try {
         await axios.post(
@@ -145,7 +154,7 @@ export class GitlabDatasource implements IDatasource {
           },
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${this.accessToken}`,
             },
           },
         )
@@ -158,22 +167,22 @@ export class GitlabDatasource implements IDatasource {
     })
   }
 
-  async cloneRepository(projectId: number, accessToken: string, path: string) {
+  async cloneRepositories(repositoryId: number, path: string) {
     return this.retry(async () => {
       try {
         const {
           data: { http_url_to_repo },
         } = await axios.get<{
           http_url_to_repo: string
-        }>(`${gitlabBaseUrl}/api/v4/projects/${projectId}`, {
+        }>(`${gitlabBaseUrl}/api/v4/projects/${repositoryId}`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${this.accessToken}`,
           },
         })
 
         const cloneUrl = http_url_to_repo.replace(
           "https://",
-          `https://oauth2:${accessToken}@`,
+          `https://oauth2:${this.accessToken}@`,
         )
         spawnSync("git", ["clone", cloneUrl, path])
       } catch (err) {
@@ -185,14 +194,14 @@ export class GitlabDatasource implements IDatasource {
     })
   }
 
-  async getBranch(projectId: number, accessToken: string, branch?: string) {
+  async getBranches(repositoryId: number, regex: string) {
     return this.retry(async () => {
       try {
         const { data } = await axios.get<any[]>(
-          `${gitlabBaseUrl}/api/v4/projects/${projectId}/repository/branches?regex=${branch}`,
+          `${gitlabBaseUrl}/api/v4/projects/${repositoryId}/repository/branches?regex=${regex}`,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${this.accessToken}`,
             },
           },
         )

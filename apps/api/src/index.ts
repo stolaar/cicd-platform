@@ -9,6 +9,8 @@ export async function main(options: ApplicationConfig = {}) {
   await app.boot()
   await app.start()
 
+  await app.lbApp.migrateSchema()
+
   await app.lbApp.bindSocketConnection(app.wsServer.nsp)
 
   app.lbApp.logger.info(`listening on ${app.httpServer.url}`, "check")

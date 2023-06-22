@@ -4,9 +4,9 @@ import { QueryFunctionContext } from "@tanstack/react-query"
 
 export const connectDatasource = createApiHandler(
   async (payload: unknown) => {
-    await axios.post("/api/datasources/connect", payload)
+    await axios.post("/api/code-hosting-provider/connect", payload)
   },
-  ["connect_datasource"],
+  ["connectCodeHostingProvider"],
 )
 
 export const getRepositories = createApiHandler(
@@ -18,7 +18,7 @@ export const getRepositories = createApiHandler(
           value: string
           provider: string
         }[]
-      >("/api/datasources/repositories", {
+      >("/api/code-hosting-provider/repositories", {
         signal,
       })
       return data
@@ -26,13 +26,13 @@ export const getRepositories = createApiHandler(
   () => ["repositories"],
 )
 
-export const getDatasources = createApiHandler(
+export const getCodeHostingProviders = createApiHandler(
   async ({ signal }: QueryFunctionContext) => {
     const { data } = await axios.get<{ provider: string; name: string }[]>(
-      "/api/datasources",
+      "/api/code-hosting-provider",
       { signal },
     )
     return data
   },
-  () => ["datasources"],
+  () => ["codeHostingProvider"],
 )
