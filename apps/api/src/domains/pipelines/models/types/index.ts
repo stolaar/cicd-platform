@@ -3,7 +3,7 @@ import { Job } from "../job.model"
 import { TCodeHostingProviderWithRelations } from "../../../code-hosting-integration/models/types"
 
 export interface IPipelineRelations {
-  datasource: TCodeHostingProviderWithRelations
+  codeHostingProvider: TCodeHostingProviderWithRelations
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

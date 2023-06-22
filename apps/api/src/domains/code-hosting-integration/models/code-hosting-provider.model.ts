@@ -1,7 +1,7 @@
 import { Entity, hasMany, model, property } from "@loopback/repository"
 import { Pipeline } from "../../pipelines/models"
 
-export enum DatasourceProviderEnum {
+export enum CodeHostingProviderEnum {
   GITLAB = "gitlab",
   GITHUB = "github",
 }
@@ -24,7 +24,7 @@ export class CodeHostingProvider extends Entity {
     type: "string",
     properties: ["gitlab", "github"],
   })
-  provider: DatasourceProviderEnum
+  provider: CodeHostingProviderEnum
 
   @property({
     type: "string",

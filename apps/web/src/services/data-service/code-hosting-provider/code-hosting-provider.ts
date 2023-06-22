@@ -2,7 +2,7 @@ import { createApiHandler } from "../utils"
 import axios from "axios"
 import { QueryFunctionContext } from "@tanstack/react-query"
 
-export const connectDatasource = createApiHandler(
+export const connectCodeHostingProvider = createApiHandler(
   async (payload: unknown) => {
     await axios.post("/api/code-hosting-provider/connect", payload)
   },

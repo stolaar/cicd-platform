@@ -2,35 +2,35 @@ import { Binding, Getter, inject } from "@loopback/core"
 import {
   IAccessTokens,
   IBranch,
-  IDatasource,
-  IDatasourceConfig,
-  IDatasourceUser,
+  ICodeHostingProvider,
+  ICodeHostingProviderConfig,
+  ICodeHostingProviderUser,
   IProject,
 } from "../types"
 import { CODE_HOSTING_PROVIDER } from "../keys"
 import { GitlabService, GithubService } from "./hosting-services"
+import { CodeHostingProviderEnum } from "../models"
 
-export class CodeHostingIntegrationService implements IDatasource {
-  private service: IDatasource
+export class CodeHostingIntegrationService implements ICodeHostingProvider {
+  private service: ICodeHostingProvider
 
   constructor(
     @inject.getter(CODE_HOSTING_PROVIDER)
-    private gitDatasourceGetter: Getter<IDatasource>,
+    private codeHostingProviderGetter: Getter<ICodeHostingProvider>,
     @inject.binding(CODE_HOSTING_PROVIDER)
-    private gitDatasourceBinding: Binding<IDatasource>,
+    private codeHostingProviderBinding: Binding<ICodeHostingProvider>,
   ) {}
 
-  async configure(config: IDatasourceConfig) {
-    console.log("Configure", { config })
+  async configure(config: ICodeHostingProviderConfig) {
     if (config.name) {
-      if (config.name === "gitlab") {
-        this.gitDatasourceBinding.toClass(GitlabService)
+      if (config.name === CodeHostingProviderEnum.GITLAB) {
+        this.codeHostingProviderBinding.toClass(GitlabService)
       }
-      if (config.name === "github") {
-        this.gitDatasourceBinding.toClass(GithubService)
+      if (config.name === CodeHostingProviderEnum.GITHUB) {
+        this.codeHostingProviderBinding.toClass(GithubService)
       }
 
-      this.service = await this.gitDatasourceGetter()
+      this.service = await this.codeHostingProviderGetter()
 
       this.service.configure(config)
     }
@@ -44,7 +44,7 @@ export class CodeHostingIntegrationService implements IDatasource {
     return this.service.getProjects(username)
   }
 
-  async getUser(): Promise<IDatasourceUser> {
+  async getUser(): Promise<ICodeHostingProviderUser> {
     return this.service.getUser()
   }
 

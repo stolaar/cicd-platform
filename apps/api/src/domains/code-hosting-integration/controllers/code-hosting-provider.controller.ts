@@ -10,7 +10,7 @@ import {
 import { CODE_HOSTING_PROVIDER_SERVICE } from "../keys"
 import { CodeHostingProviderService } from "../services"
 import { CodeHostingProvider } from "../models"
-import type { IConnectDatasource } from "../types"
+import type { IConnectCodeHostingProvider } from "../types"
 
 @api({ basePath: "/code-hosting-provider" })
 export class CodeHostingProviderController {
@@ -23,7 +23,7 @@ export class CodeHostingProviderController {
   @response(200, {
     responses: {
       "200": {
-        description: "Datasource",
+        description: "Get code hosting providers",
         content: {
           type: "array",
           schema: getJsonSchemaRef(CodeHostingProvider),
@@ -43,15 +43,17 @@ export class CodeHostingProviderController {
       },
     },
   })
-  connectDatasource(@requestBody() payload: IConnectDatasource) {
-    return this.codeHostingProviderService.connectDatasource(payload)
+  connectCodeHostingProvider(
+    @requestBody() payload: IConnectCodeHostingProvider,
+  ) {
+    return this.codeHostingProviderService.connectCodeHostingProvider(payload)
   }
 
   @get("/repositories")
   @response(200, {
     responses: {
       "200": {
-        description: "Code hosting repositories",
+        description: "Get code hosting repositories",
       },
     },
   })

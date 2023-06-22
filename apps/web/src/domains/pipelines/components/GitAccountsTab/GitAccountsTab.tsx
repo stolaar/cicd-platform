@@ -27,8 +27,8 @@ export const GitAccountsTab: FC = () => {
   const datasourceCodeRef = useRef(false)
 
   const connectDatasourceMutation = useMutation({
-    mutationFn: DataService.connectDatasource,
-    mutationKey: DataService.connectDatasource.queryKey,
+    mutationFn: DataService.connectCodeHostingProvider,
+    mutationKey: DataService.connectCodeHostingProvider.queryKey,
     onSuccess: () =>
       queryClient.invalidateQueries(
         DataService.getCodeHostingProviders.queryKey(),

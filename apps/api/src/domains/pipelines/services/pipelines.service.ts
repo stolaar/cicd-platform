@@ -11,7 +11,7 @@ import { RunnerService } from "./runner.service"
 import { CODE_HOSTING_INTEGRATION_SERVICE } from "../../code-hosting-integration/keys"
 import { CodeHostingIntegrationService } from "../../code-hosting-integration/services"
 import { CodeHostingProviderRepository } from "../../code-hosting-integration/repositories"
-import { DatasourceProviderEnum } from "../../code-hosting-integration/models"
+import { CodeHostingProviderEnum } from "../../code-hosting-integration/models"
 
 export class PipelinesService {
   constructor(
@@ -34,25 +34,28 @@ export class PipelinesService {
     provider,
     ...pipeline
   }: DataObject<Pipeline> & { provider: string }) {
-    const datasource = await this.codeHostingProviderRepository.findOne({
-      where: {
-        provider: (provider ?? "") as DatasourceProviderEnum,
-      },
-    })
+    const codeHostingProvider =
+      await this.codeHostingProviderRepository.findOne({
+        where: {
+          provider: (provider ?? "") as CodeHostingProviderEnum,
+        },
+      })
     const createdPipeline = await this.pipelineRepository.create({
       ...pipeline,
-      ...(!!datasource && { codeHostingProviderId: datasource.id }),
+      ...(!!codeHostingProvider && {
+        codeHostingProviderId: codeHostingProvider.id,
+      }),
     })
 
     if (
-      datasource?.provider === DatasourceProviderEnum.GITLAB &&
+      codeHostingProvider?.provider === CodeHostingProviderEnum.GITLAB &&
       createdPipeline.repositoryId
     ) {
       await this.codeHostingIntegrationService.configure({
-        name: datasource.provider,
-        accessToken: datasource.accessToken,
-        refreshToken: datasource.refreshToken,
-        datasourceId: datasource.id,
+        name: codeHostingProvider.provider,
+        accessToken: codeHostingProvider.accessToken,
+        refreshToken: codeHostingProvider.refreshToken,
+        codeHostingProviderId: codeHostingProvider.id,
       })
       await this.codeHostingIntegrationService.registerWebhook(
         +createdPipeline.repositoryId,
@@ -90,22 +93,23 @@ export class PipelinesService {
       throw new Error("Pipeline not found")
     }
     if (pipeline.codeHostingProviderId) {
-      const datasource = await this.codeHostingProviderRepository.findById(
-        pipeline.codeHostingProviderId,
-      )
-      if (!datasource) {
-        throw new Error("Datasource not found")
+      const codeHostingProvider =
+        await this.codeHostingProviderRepository.findById(
+          pipeline.codeHostingProviderId,
+        )
+      if (!codeHostingProvider) {
+        throw new Error("Code hosting provider not found")
       }
 
       if (
-        datasource.provider === DatasourceProviderEnum.GITLAB &&
+        codeHostingProvider.provider === CodeHostingProviderEnum.GITLAB &&
         pipeline.repositoryId
       ) {
         await this.codeHostingIntegrationService.configure({
-          name: datasource.provider,
-          accessToken: datasource.accessToken,
-          refreshToken: datasource.refreshToken,
-          datasourceId: datasource.id,
+          name: codeHostingProvider.provider,
+          accessToken: codeHostingProvider.accessToken,
+          refreshToken: codeHostingProvider.refreshToken,
+          codeHostingProviderId: codeHostingProvider.id,
         })
         await this.codeHostingIntegrationService.cloneRepositories(
           +pipeline.repositoryId,

@@ -3,7 +3,7 @@ import {
   CodeHostingCredentialsService,
   CodeHostingIntegrationService,
 } from "./services"
-import { IDatasource } from "./types"
+import { ICodeHostingProvider } from "./types"
 import { CodeHostingProviderService } from "./services/code-hosting-provider.service"
 
 export const CODE_HOSTING_INTEGRATION_SERVICE =
@@ -16,7 +16,7 @@ export const CODE_HOSTING_CREDENTIALS_SERVICE =
     "code-hosting-credentials.service",
   )
 
-export const CODE_HOSTING_PROVIDER = BindingKey.create<IDatasource>(
+export const CODE_HOSTING_PROVIDER = BindingKey.create<ICodeHostingProvider>(
   "code-hosting.provider",
 )
 

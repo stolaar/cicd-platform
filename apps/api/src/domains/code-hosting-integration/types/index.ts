@@ -1,4 +1,4 @@
-import { DatasourceProviderEnum } from "../models"
+import { CodeHostingProviderEnum } from "../models"
 
 export interface IAccessTokens {
   accessToken: string
@@ -21,20 +21,20 @@ export interface IProject {
   provider: string
 }
 
-export interface IDatasourceUser {
+export interface ICodeHostingProviderUser {
   username?: string
 }
 
-export interface IConnectDatasource {
+export interface IConnectCodeHostingProvider {
   code: string
-  provider: DatasourceProviderEnum
+  provider: CodeHostingProviderEnum
 }
 
-export interface IGitlabUser extends IDatasourceUser {}
+export interface IGitlabUser extends ICodeHostingProviderUser {}
 
-export interface IDatasourceConfig {
+export interface ICodeHostingProviderConfig {
   name?: string
-  datasourceId?: number
+  codeHostingProviderId?: number
   accessToken?: string
   refreshToken?: string
 }
@@ -48,11 +48,11 @@ export interface IBranch {
   branch: string
 }
 
-export interface IDatasource {
-  configure(config: IDatasourceConfig): void
+export interface ICodeHostingProvider {
+  configure(config: ICodeHostingProviderConfig): void
   getAccessToken(code: string): Promise<IAccessTokens>
   getProjects(username: string): Promise<IProject[]>
-  getUser(): Promise<IDatasourceUser>
+  getUser(): Promise<ICodeHostingProviderUser>
   registerWebhook(projectId: number): Promise<void>
   cloneRepositories(repositoryId: number, path: string): Promise<void>
   getBranches(repositoryId: number, regex: string): Promise<IBranch[]>

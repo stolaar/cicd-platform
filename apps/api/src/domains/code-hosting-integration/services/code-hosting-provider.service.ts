@@ -4,8 +4,8 @@ import { repository } from "@loopback/repository"
 import { CODE_HOSTING_INTEGRATION_SERVICE } from "../keys"
 import { CodeHostingIntegrationService } from "./code-hosting-integration.service"
 import { CodeHostingProviderRepository } from "../repositories"
-import { IConnectDatasource } from "../types"
-import { DatasourceProviderEnum } from "../models"
+import { IConnectCodeHostingProvider } from "../types"
+import { CodeHostingProviderEnum } from "../models"
 
 export class CodeHostingProviderService {
   constructor(
@@ -20,7 +20,10 @@ export class CodeHostingProviderService {
     return this.codeHostingProviderRepository.find()
   }
 
-  async connectDatasource({ provider, code }: IConnectDatasource) {
+  async connectCodeHostingProvider({
+    provider,
+    code,
+  }: IConnectCodeHostingProvider) {
     const existing = await this.codeHostingProviderRepository.findOne({
       where: { provider },
     })
@@ -51,18 +54,21 @@ export class CodeHostingProviderService {
   }
 
   async getRepositories() {
-    const datasource = await this.codeHostingProviderRepository.findOne({
-      fields: ["id", "accessToken", "name", "refreshToken", "provider"],
-      where: { provider: "gitlab" as DatasourceProviderEnum },
-    })
+    const codeHostingProvider =
+      await this.codeHostingProviderRepository.findOne({
+        fields: ["id", "accessToken", "name", "refreshToken", "provider"],
+        where: { provider: "gitlab" as CodeHostingProviderEnum },
+      })
 
-    if (!datasource) return []
+    if (!codeHostingProvider) return []
     await this.codeHostingIntegrationService.configure({
-      name: datasource.provider,
-      accessToken: datasource.accessToken,
-      refreshToken: datasource.refreshToken,
-      datasourceId: datasource.id as number,
+      name: codeHostingProvider.provider,
+      accessToken: codeHostingProvider.accessToken,
+      refreshToken: codeHostingProvider.refreshToken,
+      codeHostingProviderId: codeHostingProvider.id as number,
     })
-    return this.codeHostingIntegrationService.getProjects(datasource.name)
+    return this.codeHostingIntegrationService.getProjects(
+      codeHostingProvider.name,
+    )
   }
 }

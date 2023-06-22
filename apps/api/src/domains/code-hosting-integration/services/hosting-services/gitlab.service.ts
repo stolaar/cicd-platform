@@ -1,7 +1,7 @@
 import axios from "axios"
 import {
-  IDatasource,
-  IDatasourceConfig,
+  ICodeHostingProvider,
+  ICodeHostingProviderConfig,
   IGitlabProject,
   IGitlabTokenResponse,
   IGitlabUser,
@@ -16,8 +16,8 @@ import { GitlabError } from "../../../pipelines/errors/GitlabError"
 
 const gitlabBaseUrl = "https://gitlab.com"
 
-export class GitlabService implements IDatasource {
-  private datasourceId?: number
+export class GitlabService implements ICodeHostingProvider {
+  private codeHostingProviderId?: number
   private accessToken?: string
   private refreshToken?: string
 
@@ -26,8 +26,8 @@ export class GitlabService implements IDatasource {
     private codeHostingCredentialsService: CodeHostingCredentialsService,
   ) {}
 
-  configure(config: IDatasourceConfig) {
-    this.datasourceId = config.datasourceId
+  configure(config: ICodeHostingProviderConfig) {
+    this.codeHostingProviderId = config.codeHostingProviderId
     this.accessToken = config.accessToken
     this.refreshToken = config.refreshToken
   }
@@ -36,10 +36,10 @@ export class GitlabService implements IDatasource {
     if (
       this.accessToken &&
       this.accessToken !== accessToken &&
-      this.datasourceId
+      this.codeHostingProviderId
     ) {
       await this.codeHostingCredentialsService.updateTokens(
-        this.datasourceId,
+        this.codeHostingProviderId,
         accessToken,
         refreshToken,
       )
