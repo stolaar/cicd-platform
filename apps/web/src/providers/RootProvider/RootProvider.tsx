@@ -5,7 +5,8 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query"
 import { IRootProvider } from "./types"
-import { createTheme, ThemeProvider } from "@mui/material"
+import { ThemeProvider } from "@mui/material"
+import { theme } from "../../theme"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,12 +24,6 @@ const queryClient = new QueryClient({
       }
     },
   }),
-})
-
-const theme = createTheme({
-  palette: {
-    mode: "light",
-  },
 })
 
 export const RootProvider: FC<IRootProvider> = ({ children }) => {

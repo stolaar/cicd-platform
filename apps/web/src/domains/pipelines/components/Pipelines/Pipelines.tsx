@@ -5,7 +5,7 @@ import { useBoolean } from "@hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { DataService } from "@services"
 import { BaseGridRenderCellParams, DataGrid } from "@components/DataGrid"
-import { Box, IconButton } from "@mui/material"
+import { Box, Grid, IconButton } from "@mui/material"
 import Link from "next/link"
 import { PlayCircle, Delete } from "@mui/icons-material"
 import { PipelineStatus } from "@domain/pipelines/components/Pipelines/components/PipelineStatus"
@@ -106,25 +106,26 @@ export const Pipelines: FC = () => {
           </Box>
         ),
         sortable: false,
-        width: 100,
+        maxWidth: 100,
       },
     ],
     [],
   )
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+    <Grid container gap={1}>
+      <Grid item md={12} textAlign={"right"}>
         <ContainedButton onClick={openCreatePipeline}>
           Create pipeline
         </ContainedButton>
-      </Box>
+      </Grid>
       <CreatePipeline onClose={closeCreatePipeline} open={isCreatePipeline} />
-      <Box>
+      <Grid item md={12} sx={{ overflowX: "auto" }}>
         <DataGrid
           slots={{
             row: PipelineRow,
           }}
+          density="compact"
           autoHeight
           columns={pipelineColumns}
           rows={data}
@@ -133,7 +134,7 @@ export const Pipelines: FC = () => {
           sortingMode="server"
           rowCount={data?.length ?? 0}
         />
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   )
 }
