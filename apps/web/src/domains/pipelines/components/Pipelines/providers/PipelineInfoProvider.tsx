@@ -11,6 +11,7 @@ export const PipelineInfoProvider: FC<IPipelineInfoProvider> = ({
   pipelineCreatedAt,
   pipelineStatus,
   children,
+  pipelineId,
 }) => {
   const [status, setStatus] = useState(pipelineStatus ?? "pending")
   const { socket } = useSocket()
@@ -27,8 +28,9 @@ export const PipelineInfoProvider: FC<IPipelineInfoProvider> = ({
       pipelineStatus: status,
       setStatus,
       jobId,
+      pipelineId,
     }),
-    [pipelineCreatedAt, status, jobId],
+    [pipelineCreatedAt, status, jobId, pipelineId],
   )
 
   return (

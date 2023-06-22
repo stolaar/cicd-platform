@@ -5,4 +5,5 @@ export interface IFormInputFieldProps<T extends FieldValues>
   extends ITextField {
   name: Path<T>
   control: Control<T>
+  initialValue?: string
 }

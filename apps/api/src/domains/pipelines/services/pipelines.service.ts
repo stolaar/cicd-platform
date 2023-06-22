@@ -55,6 +55,14 @@ export class PipelinesService {
     }
   }
 
+  async editPipeline({ id, ...pipeline }: DataObject<Pipeline>) {
+    const existingPipeline = await this.pipelineRepository.findById(id)
+    if (!existingPipeline) {
+      throw new Error("Pipeline not found")
+    }
+    await this.pipelineRepository.updateById(id, pipeline)
+  }
+
   async getPipelines() {
     const pipelines = await this.pipelineRepository.find()
     return await Promise.all(
@@ -71,7 +79,7 @@ export class PipelinesService {
   }
 
   async runPipeline(pipelineId: number) {
-    this.socket.emit("pipelineStatus", { status: "queued" })
+    this.socket.emit("pipelineStatus", { status: "running", pipelineId })
     const pipeline = await this.pipelineRepository.findById(pipelineId)
     if (!pipeline) {
       throw new Error("Pipeline not found")
@@ -104,11 +112,12 @@ export class PipelinesService {
             commitMessage: lastCommit.commitMessage,
             pipelineId: pipeline.id,
             commitSha: lastCommit.commitSha,
-            status: "queued",
+            status: "running",
             author: lastCommit.author,
             commitLink: lastCommit.commitLink,
             branch: lastCommit.branch,
           })
+          this.socket.emit("jobCreated", { jobId: `${job.id}`, pipelineId })
           this.runnerService.runJob(pipeline, job)
         }
       }

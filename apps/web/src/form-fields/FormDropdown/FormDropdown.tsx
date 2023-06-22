@@ -7,10 +7,18 @@ export const FormDropdown = <T extends FieldValues>({
   label,
   options,
   control,
+  initialValue,
 }: IFormDropdown<T>) => {
-  const { field } = useController({ control, name })
+  const { field } = useController({
+    control,
+    name,
+    defaultValue: options.length
+      ? initialValue
+      : (undefined as typeof initialValue),
+  })
   return (
     <Dropdown
+      id={name}
       label={label}
       name={name}
       value={field.value}

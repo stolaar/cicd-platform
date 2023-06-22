@@ -2,6 +2,7 @@ import { inject } from "@loopback/core"
 import {
   post,
   del,
+  put,
   api,
   response,
   getJsonSchemaRef,
@@ -35,6 +36,21 @@ export class PipelinesController {
     @requestBody() pipeline: Pipeline & { provider: string },
   ): Promise<void> {
     return this.pipelinesService.createPipeline(pipeline)
+  }
+
+  @put("/")
+  @response(200, {
+    responses: {
+      "200": {
+        description: "Edit Pipeline",
+        content: {
+          schema: getJsonSchemaRef(Pipeline),
+        },
+      },
+    },
+  })
+  editPipeline(@requestBody() pipeline: Pipeline): Promise<void> {
+    return this.pipelinesService.editPipeline(pipeline)
   }
 
   @get("/")

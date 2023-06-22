@@ -1,28 +1,19 @@
-import { FC } from "react"
-import { ICreatePipeline } from "./types"
+import { FC, useEffect } from "react"
+import { ICreateOrEditPipeline } from "./types"
 import { useForm } from "react-hook-form"
 import { FormTextField, FormDropdown } from "@form-fields"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { DataService } from "@services"
 import { Dialog } from "@components/Dialog/Dialog"
 import { ContainedButton } from "@components"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { pipelineSchema, TPipeline } from "./validation/validation-schema"
 
-const pipelineSchema = z.object({
-  name: z.string(),
-  branch: z.string(),
-  repositoryId: z.string(),
-})
-
-type TPipelineValues = z.infer<typeof pipelineSchema>
-
-export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
-  const methods = useForm({
-    mode: "onChange",
-    resolver: zodResolver(pipelineSchema),
-  })
-
+export const CreateOrEditPipeline: FC<ICreateOrEditPipeline> = ({
+  open,
+  onClose,
+  pipeline,
+}) => {
   const queryClient = useQueryClient()
 
   const { data = [] } = useQuery({
@@ -35,6 +26,15 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
     },
   })
 
+  const methods = useForm<TPipeline>({
+    mode: "onChange",
+    resolver: zodResolver(pipelineSchema),
+    defaultValues: {
+      name: pipeline?.name,
+      branch: pipeline?.branch,
+    },
+  })
+
   const createPipelineMutation = useMutation({
     mutationKey: DataService.createPipeline.queryKey,
     mutationFn: DataService.createPipeline,
@@ -44,7 +44,21 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
     },
   })
 
-  const onCreateMutation = async (values: TPipelineValues) => {
+  const editPipelineMutation = useMutation({
+    mutationKey: DataService.editPipeline.queryKey,
+    mutationFn: DataService.editPipeline,
+    onSuccess: () => {
+      onClose()
+      return queryClient.invalidateQueries(DataService.getPipelines.queryKey())
+    },
+  })
+
+  const onCreateOrEditMutation = async (values: TPipeline) => {
+    if (pipeline?.id) {
+      await editPipelineMutation.mutateAsync({ ...values, id: pipeline.id })
+      return
+    }
+
     const provider = data.find(
       (item) => item.value === values.repositoryId,
     )?.provider
@@ -56,10 +70,16 @@ export const CreatePipeline: FC<ICreatePipeline> = ({ open, onClose }) => {
     onClose()
   }
 
+  useEffect(() => {
+    if (pipeline && data.length) {
+      methods.setValue("repositoryId", pipeline.repositoryId)
+    }
+  }, [pipeline, data])
+
   return (
-    <form onSubmit={methods.handleSubmit(onCreateMutation)}>
+    <form onSubmit={methods.handleSubmit(onCreateOrEditMutation)}>
       <Dialog
-        title={"Create pipeline"}
+        title={`${pipeline?.id ? "Edit" : "Create"} pipeline`}
         open={open}
         onClose={onCloseHandler}
         actions={<ContainedButton type={"submit"}>Save</ContainedButton>}

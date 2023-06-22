@@ -23,9 +23,12 @@ export class RunnerService {
     await this.jobService.updateJob(job.id, {
       status: "running",
     })
-    this.socket
-      .to(room)
-      .emit("pipelineStatus", { jobId: `${job.id}`, status: "running" })
+
+    this.socket.to(room).emit("pipelineStatus", {
+      jobId: `${job.id}`,
+      status: "running",
+      pipelineId: pipeline.id,
+    })
     const installProcess = spawn("yarn", ["install"], {
       cwd: path.join(
         __dirname,

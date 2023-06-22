@@ -6,15 +6,29 @@ import { useSocket } from "../../../../../providers/SocketProvider/useSocket"
 import { TStatus } from "@domain/pipelines/components/Pipelines/providers/types"
 
 export const PipelineStatus: FC<IPipelineStatus> = () => {
-  const { pipelineStatus, setStatus, jobId: currentJobId } = usePipelineInfo()
+  const {
+    pipelineStatus,
+    setStatus,
+    jobId: currentJobId,
+    pipelineId,
+  } = usePipelineInfo()
   const { socket } = useSocket()
 
   useEffect(() => {
     if (socket) {
       socket.on(
         "pipelineStatus",
-        ({ status, jobId }: { status: TStatus; jobId: string }) => {
-          if (jobId === currentJobId) setStatus(status)
+        ({
+          status,
+          jobId,
+          pipelineId: receivedPipelineId,
+        }: {
+          status: TStatus
+          jobId: string
+          pipelineId: number
+        }) => {
+          if (jobId === currentJobId || receivedPipelineId === pipelineId)
+            setStatus(status)
         },
       )
 

@@ -1,21 +1,26 @@
-import React, { FC, useMemo } from "react"
+import React, { FC, useMemo, useState } from "react"
 import { ContainedButton, Text } from "@components"
-import { CreatePipeline } from "@domain/pipelines/components/Pipelines/CreatePipeline"
+import { CreateOrEditPipeline } from "@domain/pipelines/components/Pipelines/CreateOrEditPipeline"
 import { useBoolean } from "@hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { DataService } from "@services"
 import { BaseGridRenderCellParams, DataGrid } from "@components/DataGrid"
 import { Box, Grid, IconButton } from "@mui/material"
 import Link from "next/link"
-import { PlayCircle, Delete } from "@mui/icons-material"
+import { PlayCircle, Delete, Edit } from "@mui/icons-material"
 import { PipelineStatus } from "@domain/pipelines/components/Pipelines/components/PipelineStatus"
 import { PipelineRow } from "@domain/pipelines/components/Pipelines/components/PipelineRow"
+import { TPipeline } from "@domain/pipelines/components/Pipelines/validation/validation-schema"
 
 export const Pipelines: FC = () => {
   const [
     isCreatePipeline,
     { setTrue: openCreatePipeline, setFalse: closeCreatePipeline },
   ] = useBoolean(false)
+
+  const [selectedPipeline, setSelectedPipeline] = useState<TPipeline | null>(
+    null,
+  )
 
   const queryClient = useQueryClient()
 
@@ -87,15 +92,20 @@ export const Pipelines: FC = () => {
           ),
         sortable: false,
         flex: 1,
-        minWidth: 481,
+        minWidth: 350,
       },
       {
         field: "actions",
         headerName: "Actions",
         renderCell: (row: any) => (
           <Box>
-            <IconButton onClick={() => onRunPipeline(row.id)}>
+            <IconButton color={"primary"} onClick={() => onRunPipeline(row.id)}>
               <PlayCircle />
+            </IconButton>
+            <IconButton
+              onClick={() => setSelectedPipeline(row?.row as TPipeline)}
+            >
+              <Edit />
             </IconButton>
             <IconButton
               color={"error"}
@@ -106,11 +116,16 @@ export const Pipelines: FC = () => {
           </Box>
         ),
         sortable: false,
-        maxWidth: 100,
+        width: 150,
       },
     ],
     [],
   )
+
+  const onCloseCreateOrEditPipeline = () => {
+    setSelectedPipeline(null)
+    closeCreatePipeline()
+  }
 
   return (
     <Grid container gap={1}>
@@ -119,7 +134,13 @@ export const Pipelines: FC = () => {
           Create pipeline
         </ContainedButton>
       </Grid>
-      <CreatePipeline onClose={closeCreatePipeline} open={isCreatePipeline} />
+      {(isCreatePipeline || !!selectedPipeline) && (
+        <CreateOrEditPipeline
+          onClose={onCloseCreateOrEditPipeline}
+          open={isCreatePipeline || !!selectedPipeline}
+          pipeline={selectedPipeline ?? undefined}
+        />
+      )}
       <Grid item md={12} sx={{ overflowX: "auto" }}>
         <DataGrid
           slots={{

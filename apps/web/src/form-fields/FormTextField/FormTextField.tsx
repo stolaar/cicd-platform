@@ -7,7 +7,10 @@ export const FormTextField = <T extends FieldValues>({
   control,
   ...props
 }: IFormInputFieldProps<T>) => {
-  const { field } = useController({ control, name })
+  const { field } = useController({
+    control,
+    name,
+  })
 
   return (
     <TextField {...field} {...props}>

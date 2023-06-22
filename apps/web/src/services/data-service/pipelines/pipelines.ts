@@ -8,6 +8,12 @@ export const createPipeline = createApiHandler(
   },
   ["createPipeline"],
 )
+export const editPipeline = createApiHandler(
+  async (payload: unknown) => {
+    await axios.put("/api/pipelines", payload)
+  },
+  ["editPipeline"],
+)
 
 export const getPipelines = createApiHandler(
   async ({ signal }: QueryFunctionContext) => {
