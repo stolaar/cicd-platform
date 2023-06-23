@@ -15,6 +15,7 @@ import { CODE_HOSTING_CREDENTIALS_SERVICE } from "../../keys"
 import { CodeHostingCredentialsService } from "../code-hosting-credentials.service"
 import { retryRequest } from "../../../../utils/retry-request.util"
 import { GitlabError } from "../../../pipelines/errors/GitlabError"
+import { LoggingBindings, WinstonLogger } from "@loopback/logging"
 
 const gitlabBaseUrl = "https://gitlab.com"
 
@@ -26,6 +27,8 @@ export class GitlabService implements ICodeHostingProvider {
   constructor(
     @inject(CODE_HOSTING_CREDENTIALS_SERVICE)
     private codeHostingCredentialsService: CodeHostingCredentialsService,
+    @inject(LoggingBindings.WINSTON_LOGGER)
+    public logger: WinstonLogger,
   ) {}
 
   configure(config: ICodeHostingProviderConfig) {
@@ -208,14 +211,33 @@ export class GitlabService implements ICodeHostingProvider {
             },
           },
         )
-        return data.map(({ name, commit }) => ({
-          id: commit.id,
-          commitMessage: commit.message?.split("\n").shift(),
-          author: commit.author_name,
-          commitSha: commit.short_id,
-          commitLink: commit.web_url,
-          branch: name,
-        }))
+        return Promise.all(
+          data.map(async ({ name, commit }) => {
+            let avatarUrl = ""
+            try {
+              const {
+                data: { avatar_url },
+              } = await axios.get(`${gitlabBaseUrl}/api/v4/avatar`, {
+                params: {
+                  email: commit.author_email,
+                },
+              })
+              avatarUrl = avatar_url
+            } catch (err) {
+              this.logger.error("Error", err.response.data)
+            }
+
+            return {
+              id: commit.id,
+              commitMessage: commit.message?.split("\n").shift(),
+              author: commit.author_name,
+              commitSha: commit.short_id,
+              commitLink: commit.web_url,
+              authorAvatarUrl: avatarUrl,
+              branch: name,
+            }
+          }),
+        )
       } catch (err) {
         throw new GitlabError(
           err.response?.data?.error_description,

@@ -255,6 +255,7 @@ export class GithubService implements ICodeHostingProvider {
                 author: commit.commit?.author?.name,
                 commitSha: commit.sha?.substring(0, 5),
                 commitLink: commit.html_url,
+                authorAvatarUrl: commit?.author?.avatar_url,
                 branch: name,
               }
             }),

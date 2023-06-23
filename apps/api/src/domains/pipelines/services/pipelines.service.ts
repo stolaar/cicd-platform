@@ -135,6 +135,7 @@ export class PipelinesService {
             status: "running",
             author: lastCommit.author,
             commitLink: lastCommit.commitLink,
+            authorAvatarUrl: lastCommit?.authorAvatarUrl,
             branch: lastCommit.branch,
           })
           this.socket.emit("jobCreated", { jobId: `${job.id}`, pipelineId })

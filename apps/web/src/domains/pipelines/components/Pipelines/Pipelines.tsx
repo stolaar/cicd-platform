@@ -5,7 +5,7 @@ import { useBoolean } from "@hooks"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { DataService } from "@services"
 import { BaseGridRenderCellParams } from "@components/DataGrid"
-import { Box, Grid, IconButton } from "@mui/material"
+import { Avatar, Box, Grid, IconButton } from "@mui/material"
 import Link from "next/link"
 import { PlayCircle, Delete, Edit } from "@mui/icons-material"
 import { PipelineStatus } from "@domain/pipelines/components/Pipelines/components/PipelineStatus"
@@ -86,7 +86,15 @@ export const Pipelines: FC = () => {
           !!value && (
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Box>{value?.commitMessage}</Box>
-              <Box>{value?.author}</Box>
+              <Box sx={{ display: "flex", gap: "5px", alignItems: "center" }}>
+                {!!value.authorAvatarUrl && (
+                  <Avatar
+                    sx={{ height: 24, width: 24 }}
+                    src={value.authorAvatarUrl}
+                  />
+                )}
+                {value?.author}
+              </Box>
               <Box>
                 {`${value?.branch} `}
                 {!!value?.commitLink && (

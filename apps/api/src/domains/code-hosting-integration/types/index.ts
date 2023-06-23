@@ -59,6 +59,7 @@ export interface IBranch {
   id: number
   commitMessage: string
   author: string
+  authorAvatarUrl: string
   commitSha: string
   commitLink: string
   branch: string

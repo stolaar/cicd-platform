@@ -40,6 +40,11 @@ export class Job extends Entity {
   })
   author?: string
 
+  @property({
+    type: "string",
+  })
+  authorAvatarUrl?: string
+
   @belongsTo(() => Pipeline)
   pipelineId: number
 
