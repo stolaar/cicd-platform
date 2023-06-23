@@ -31,6 +31,7 @@ export interface IProject {
 
 export interface ICodeHostingProviderUser {
   username?: string
+  avatarUrl?: string
 }
 
 export interface IConnectCodeHostingProvider {
@@ -38,10 +39,14 @@ export interface IConnectCodeHostingProvider {
   provider: CodeHostingProviderEnum
 }
 
-export interface IGithubUser extends ICodeHostingProviderUser {
+export interface IGithubUser {
   login: string
+  avatar_url: string
 }
-export interface IGitlabUser extends ICodeHostingProviderUser {}
+export interface IGitlabUser {
+  username: string
+  avatar_url: string
+}
 
 export interface ICodeHostingProviderConfig {
   name?: string

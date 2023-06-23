@@ -29,10 +29,9 @@ export const getRepositories = createApiHandler(
 
 export const getCodeHostingProviders = createApiHandler(
   async ({ signal }: QueryFunctionContext) => {
-    const { data } = await axios.get<{ provider: string; name: string }[]>(
-      "/api/code-hosting-provider",
-      { signal },
-    )
+    const { data } = await axios.get<
+      { provider: string; name: string; avatarUrl: string }[]
+    >("/api/code-hosting-provider", { signal })
     return data
   },
   () => ["codeHostingProvider"],

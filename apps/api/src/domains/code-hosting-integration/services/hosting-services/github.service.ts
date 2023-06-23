@@ -163,7 +163,7 @@ export class GithubService implements ICodeHostingProvider {
           },
         },
       )
-      return { ...data, username: data.login }
+      return { avatarUrl: data.avatar_url, username: data.login }
     })
   }
 

@@ -41,6 +41,7 @@ export class CodeHostingProviderService {
     if (existing) {
       existing.refreshToken = refreshToken
       existing.accessToken = accessToken
+      existing.avatarUrl = user.avatarUrl ?? existing.avatarUrl
       await this.codeHostingProviderRepository.save(existing)
       return
     }

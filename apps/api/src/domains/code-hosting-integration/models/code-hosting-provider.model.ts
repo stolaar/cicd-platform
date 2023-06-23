@@ -34,6 +34,11 @@ export class CodeHostingProvider extends Entity {
   @property({
     type: "string",
   })
+  avatarUrl: string
+
+  @property({
+    type: "string",
+  })
   refreshToken: string
 
   @hasMany(() => Pipeline)

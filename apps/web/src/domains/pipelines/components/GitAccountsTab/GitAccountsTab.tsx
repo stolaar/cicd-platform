@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef } from "react"
 import { TabPanel } from "@mui/lab"
-import { Box } from "@mui/material"
+import { Avatar, Box } from "@mui/material"
 import { useRouter } from "next/router"
 import { GitHub } from "@mui/icons-material"
 import { ContainedButton, Gitlab, Text } from "@components"
@@ -42,7 +42,6 @@ export const GitAccountsTab: FC = () => {
 
   useEffect(() => {
     if (router.query.code && !datasourceCodeRef.current) {
-      console.log({ provider: router.query.provider })
       connectDatasourceMutation.mutate({
         code: router.query.code as string,
         provider: router.query.provider ?? "gitlab",
@@ -81,10 +80,13 @@ export const GitAccountsTab: FC = () => {
           <Text variant={"h3"}>{LABELS.connectedAccounts}</Text>
           <StyledDivider />
           <Box sx={{ display: "flex", gap: "15px" }}>
-            {data.map(({ provider, name }) => (
+            {data.map(({ provider, name, avatarUrl }) => (
               <StyledCard key={name}>
                 <StyledCardHeader title={provider} />
-                <StyledCardContent>@{name}</StyledCardContent>
+                <StyledCardContent>
+                  {avatarUrl && <Avatar src={avatarUrl} alt={name} />}
+                  <Text variant={"subtitle2"}>@{name}</Text>
+                </StyledCardContent>
               </StyledCard>
             ))}
           </Box>

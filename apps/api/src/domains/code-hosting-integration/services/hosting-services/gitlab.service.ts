@@ -141,7 +141,7 @@ export class GitlabService implements ICodeHostingProvider {
         },
       )
 
-      return data
+      return { username: data.username, avatarUrl: data.avatar_url }
     })
   }
 
