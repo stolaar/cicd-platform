@@ -8,16 +8,23 @@ import {
   ListItemText,
 } from "@mui/material"
 import { StyledDrawer, StyledListButton } from "./SideBar.styled"
-import { ChevronLeft, ChevronRight } from "@mui/icons-material"
+import { ChevronLeft, ChevronRight, Logout } from "@mui/icons-material"
 import { useRouter } from "next/router"
 import {
   isActive,
   navItems as items,
 } from "@components/SideBar/utils/nav-items"
+import { signOut } from "next-auth/react"
 
 export const SideBar: FC<ISideBar> = ({ navItems = items }) => {
   const [open, setOpen] = useState(false)
   const router = useRouter()
+
+  const onLogout = () => {
+    signOut({
+      callbackUrl: "/login",
+    })
+  }
 
   return (
     <StyledDrawer variant={"permanent"} open={open}>
@@ -48,6 +55,12 @@ export const SideBar: FC<ISideBar> = ({ navItems = items }) => {
           )
         })}
       </List>
+      <IconButton
+        onClick={onLogout}
+        sx={{ marginTop: "auto", marginBottom: "30px" }}
+      >
+        <Logout />
+      </IconButton>
     </StyledDrawer>
   )
 }
