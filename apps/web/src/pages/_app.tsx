@@ -1,14 +1,20 @@
 import "@styles/globals.css"
-import type { AppProps } from "next/app"
 import { RootProvider } from "@providers"
 import { AppLayout } from "../layout/AppLayout/AppLayout"
+import { ReactElement } from "react"
+import { TAppProps } from "../types/page"
 
-export default function App({ Component, pageProps }: AppProps) {
+const DefaultLayout = (page: ReactElement) => <AppLayout>{page}</AppLayout>
+
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: TAppProps) {
+  const getLayout = Component.getLayout ?? DefaultLayout
+
   return (
-    <RootProvider>
-      <AppLayout>
-        <Component {...pageProps} />
-      </AppLayout>
+    <RootProvider session={session}>
+      {getLayout(<Component {...pageProps} />)}
     </RootProvider>
   )
 }

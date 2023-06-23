@@ -38,6 +38,10 @@ import {
   CodeHostingIntegrationService,
   CodeHostingProviderService,
 } from "./domains/code-hosting-integration/services"
+import { AUTH_SERVICE } from "./domains/auth/key"
+import { AuthService } from "./domains/auth/services/auth.service"
+import { AuthenticationComponent } from "@loopback/authentication"
+import { JWTAuthenticationComponent } from "@loopback/authentication-jwt"
 
 const SPLAT = Symbol.for("splat")
 
@@ -87,8 +91,7 @@ export class ApiApplication extends BootMixin(
       reconnectInterval: 600000, // 10 minutes
     })
 
-    this.component(RestExplorerComponent)
-    this.component(LoggingComponent)
+    this.setupComponents()
 
     this.get<WinstonLogger>(LoggingBindings.WINSTON_LOGGER).then(
       (logger) => (this.logger = logger),
@@ -121,6 +124,14 @@ export class ApiApplication extends BootMixin(
     this.bind(PIPELINES_SERVICE).toClass(PipelinesService)
     this.bind(JOB_SERVICE).toClass(JobService)
     this.bind(RUNNER_SERVICE).toClass(RunnerService)
+    this.bind(AUTH_SERVICE).toClass(AuthService)
+  }
+
+  setupComponents() {
+    this.component(RestExplorerComponent)
+    this.component(LoggingComponent)
+    this.component(AuthenticationComponent)
+    this.component(JWTAuthenticationComponent)
   }
 
   bindSocketConnection(socket: Server | Namespace) {

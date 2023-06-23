@@ -5,6 +5,15 @@ export const StyledAppContainer = styled(Box)({
   overflowX: "hidden",
 })
 
+export const StyledUnAuthAppContainer = styled(Box)({
+  minHeight: "100vh",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  overflowX: "hidden",
+  textAlign: "center",
+})
+
 export const StyledMainContainer = styled(Box)(({ theme }) => ({
   flexGrow: 1,
   flex: 1,

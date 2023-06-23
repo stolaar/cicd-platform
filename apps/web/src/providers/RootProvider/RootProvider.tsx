@@ -7,6 +7,7 @@ import {
 import { IRootProvider } from "./types"
 import { ThemeProvider } from "@mui/material"
 import { theme } from "../../theme"
+import { SessionProvider } from "next-auth/react"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,10 +27,12 @@ const queryClient = new QueryClient({
   }),
 })
 
-export const RootProvider: FC<IRootProvider> = ({ children }) => {
+export const RootProvider: FC<IRootProvider> = ({ children, session }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
-    </QueryClientProvider>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   )
 }

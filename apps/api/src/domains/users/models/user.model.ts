@@ -7,13 +7,35 @@ export class User extends Entity {
     id: true,
     generated: true,
   })
-  id?: number
+  id: number
+
+  @property({
+    type: "string",
+    required: false,
+  })
+  name: string
 
   @property({
     type: "string",
     required: true,
+    index: {
+      unique: true,
+    },
   })
-  name: string
+  email: string
+
+  @property({
+    type: "string",
+    required: true,
+    hidden: true,
+  })
+  password: string
+
+  @property({
+    type: "number",
+    required: false,
+  })
+  pin: number
 
   constructor(data?: Partial<User>) {
     super(data)
